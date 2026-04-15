@@ -21,66 +21,82 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=2063927303]
+custom_minimum_size = Vector2(600, 760)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=385727169]
 layout_mode = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=62480913]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1486035752]
 layout_mode = 2
+theme_override_font_sizes/font_size = 54
 text = "登录"
 horizontal_alignment = 1
 
 [node name="AccountEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1841955857]
+custom_minimum_size = Vector2(500, 64)
 layout_mode = 2
 placeholder_text = "请输入账号"
 
 [node name="PasswordEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=169232235]
+custom_minimum_size = Vector2(500, 64)
 layout_mode = 2
 placeholder_text = "请输入密码"
 secret = true
 
 [node name="SelectedServerLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1428968207]
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "当前服务器：未选择"
 horizontal_alignment = 1
 
 [node name="SelectServerButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=891020124]
+custom_minimum_size = Vector2(500, 58)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "选择服务器"
 
 [node name="Buttons" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=167174732]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="ConnectButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=236321602]
+custom_minimum_size = Vector2(156, 58)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "连接"
 
 [node name="LoginButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=969195767]
+custom_minimum_size = Vector2(156, 58)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "登录"
 
 [node name="DisconnectButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=439408157]
+custom_minimum_size = Vector2(156, 58)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "断开"
 
 [node name="StatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=511610764]
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "状态：未连接"
 horizontal_alignment = 1
 
 [node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=312870688]
+custom_minimum_size = Vector2(500, 58)
 layout_mode = 2
+theme_override_font_sizes/font_size = 28
 text = "返回"
 
 [node name="ServerSelectPopup" parent="." unique_id=980277749 instance=ExtResource("2_jaj85")]
