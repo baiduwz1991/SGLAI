@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://cd7xhtsfkqv44"]
+
+[ext_resource type="Script" uid="uid://bxd1epdpybsg0" path="res://src/modules/login/view/Login.gd" id="1_40a0b"]
+[ext_resource type="PackedScene" path="res://src/modules/login/view/ServerSelectPopup.tscn" id="2_jaj85"]
+
+[node name="Login" type="Control" unique_id=1900522827]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_40a0b")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=2108926590]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=2063927303]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=385727169]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=62480913]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1486035752]
+layout_mode = 2
+text = "登录"
+horizontal_alignment = 1
+
+[node name="AccountEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1841955857]
+layout_mode = 2
+placeholder_text = "请输入账号"
+
+[node name="PasswordEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=169232235]
+layout_mode = 2
+placeholder_text = "请输入密码"
+secret = true
+
+[node name="SelectedServerLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1428968207]
+layout_mode = 2
+text = "当前服务器：未选择"
+horizontal_alignment = 1
+
+[node name="SelectServerButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=891020124]
+layout_mode = 2
+text = "选择服务器"
+
+[node name="Buttons" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=167174732]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ConnectButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=236321602]
+layout_mode = 2
+text = "连接"
+
+[node name="LoginButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=969195767]
+layout_mode = 2
+text = "登录"
+
+[node name="DisconnectButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=439408157]
+layout_mode = 2
+text = "断开"
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=511610764]
+layout_mode = 2
+text = "状态：未连接"
+horizontal_alignment = 1
+
+[node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=312870688]
+layout_mode = 2
+text = "返回"
+
+[node name="ServerSelectPopup" parent="." unique_id=980277749 instance=ExtResource("2_jaj85")]
+visible = false
+layout_mode = 1

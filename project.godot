@@ -11,13 +11,15 @@ config_version=5
 [application]
 
 config/name="新建游戏项目"
-run/main_scene="res://src/modules/menu/MainMenu.tscn"
+run/main_scene="res://src/modules/login/view/Login.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 UIFontService="*res://src/core/UIFontService.gd"
+ControllerManager="*res://src/core/mvc/ControllerManager.gd"
+NetworkClient="*res://src/core/net/NetworkClient.gd"
 
 [display]
 
