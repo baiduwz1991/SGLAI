@@ -25,6 +25,7 @@ NetworkClient="*res://src/core/net/NetworkClient.gd"
 
 window/size/viewport_width=720
 window/size/viewport_height=1560
+window/stretch/mode="canvas_items"
 window/stretch/aspect="keep_width"
 
 [editor_plugins]

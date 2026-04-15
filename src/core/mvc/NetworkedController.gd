@@ -74,6 +74,10 @@ func unregister_protocol_handler(command: StringName, handler: Callable) -> void
 
 
 func clear_protocol_handlers() -> void:
+	if _protocol_router == null:
+		_protocol_bindings.clear()
+		return
+
 	for binding in _protocol_bindings:
 		var command: StringName = binding.get("command", StringName())
 		var handler: Callable = binding.get("handler", Callable())
@@ -85,6 +89,8 @@ func clear_socket_signals() -> void:
 	for binding in _socket_signal_bindings:
 		var signal_ref: Signal = binding.get("signal_ref", Signal())
 		var handler: Callable = binding.get("handler", Callable())
+		if signal_ref.is_null():
+			continue
 		if signal_ref.is_connected(handler):
 			signal_ref.disconnect(handler)
 	_socket_signal_bindings.clear()
@@ -93,13 +99,6 @@ func clear_socket_signals() -> void:
 func on_release() -> void:
 	clear_socket_signals()
 	clear_protocol_handlers()
-
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE:
-		clear_socket_signals()
-		clear_protocol_handlers()
-
 
 func _has_protocol_binding(command: StringName, handler: Callable) -> bool:
 	for binding in _protocol_bindings:
