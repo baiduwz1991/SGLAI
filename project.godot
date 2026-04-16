@@ -10,16 +10,20 @@ config_version=5
 
 [application]
 
-config/name="新建游戏项目"
+config/name="SANHAI"
 run/main_scene="res://src/modules/login/view/Login.tscn"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-UIFontService="*res://src/core/UIFontService.gd"
+UIFontService="*res://src/core/font/UIFontService.gd"
 ControllerManager="*res://src/core/mvc/ControllerManager.gd"
-NetworkClient="*res://src/core/net/NetworkClient.gd"
+NetSocket="*res://script/network/NetSocket.cs"
+HttpManager="*res://script/network/HttpManager.cs"
+Platform="*res://src/core/net/Platform.gd"
+MessageManager="*res://src/core/net/MessageManager.gd"
+NetManager="*res://src/core/net/NetManager.gd"
 
 [display]
 
@@ -27,6 +31,10 @@ window/size/viewport_width=720
 window/size/viewport_height=1560
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep_width"
+
+[dotnet]
+
+project/assembly_name="SANHAI"
 
 [editor_plugins]
 

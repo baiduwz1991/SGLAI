@@ -1,0 +1,32 @@
+-- ******************************************************************
+-- @file       AppConfig.lua     
+-- @author    Yang hongzhi            
+-- @Modified   2025-04-08  16:47:45 
+-- @Describe：
+-- ******************************************************************
+-- ProjectName:书境传奇-stable1
+-- PackageName:com.qc.mooncake_stable1
+AppConfig = {
+    --登录Key
+    loginKey = "a0482eaf-14e8-4a65-950e-864214f62da5",
+    --渠道号
+    partnerId = "1001",
+    --版本号
+    version = "100",
+    --内存大小(G)
+    ram = 4,
+    --正式地址
+    onlineGameCenter = "https://login-dsn.qcplay.com/Api/ServerList_Client.ashx",
+    --内网测试地址
+    inTestGameCenter = "https://loginservertest-lang-dsn.7qule.com/Api/ServerList_Client.ashx",
+    --外网测试地址
+    outTestGameCenter = "https://loginservertest-lang-dsn.7qule.com/Api/ServerList_Client.ashx",
+    --ECS桶名
+    cosBucket = "dsn-1251004500",
+    --ECS地区
+    cosRegion = "ap-shanghai",
+    --上传获取参数地址
+    cosUploadParameters = "https://dsn-tos.qcplay.com"
+}
+
+return AppConfig

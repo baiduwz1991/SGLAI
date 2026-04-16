@@ -1,104 +1,140 @@
-[gd_scene format=3 uid="uid://cd7xhtsfkqv44"]
+[gd_scene format=3 uid="uid://d3ypoy3xv4r7u"]
 
-[ext_resource type="Script" uid="uid://bxd1epdpybsg0" path="res://src/modules/login/view/Login.gd" id="1_40a0b"]
-[ext_resource type="PackedScene" path="res://src/modules/login/view/ServerSelectPopup.tscn" id="2_jaj85"]
+[ext_resource type="Script" uid="uid://5chogb34kews" path="res://src/modules/login/view/GameLoginPanel.gd" id="1_1xy0f"]
 
-[node name="Login" type="Control" unique_id=1900522827]
+[node name="Login" type="Control" unique_id=308276987]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_40a0b")
+script = ExtResource("1_1xy0f")
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=2108926590]
+[node name="Panel" type="PanelContainer" parent="." unique_id=135923986]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -220.0
+offset_right = 240.0
+offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=2063927303]
-custom_minimum_size = Vector2(600, 760)
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=711015208]
 layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=385727169]
+[node name="RootVBox" type="VBoxContainer" parent="Panel/Margin" unique_id=1352540482]
 layout_mode = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 30
+theme_override_constants/separation = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=62480913]
+[node name="Title" type="Label" parent="Panel/Margin/RootVBox" unique_id=2034324770]
 layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1486035752]
-layout_mode = 2
-theme_override_font_sizes/font_size = 54
-text = "登录"
+theme_override_font_sizes/font_size = 24
+text = "登录联调面板"
 horizontal_alignment = 1
 
-[node name="AccountEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1841955857]
-custom_minimum_size = Vector2(500, 64)
+[node name="LoginRoot" type="VBoxContainer" parent="Panel/Margin/RootVBox" unique_id=1591968874]
 layout_mode = 2
-placeholder_text = "请输入账号"
+theme_override_constants/separation = 10
 
-[node name="PasswordEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=169232235]
-custom_minimum_size = Vector2(500, 64)
+[node name="UsernameInput" type="LineEdit" parent="Panel/Margin/RootVBox/LoginRoot" unique_id=575360538]
 layout_mode = 2
-placeholder_text = "请输入密码"
+placeholder_text = "账号（email）"
+
+[node name="PasswordInput" type="LineEdit" parent="Panel/Margin/RootVBox/LoginRoot" unique_id=826536651]
+layout_mode = 2
+placeholder_text = "密码"
 secret = true
 
-[node name="SelectedServerLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1428968207]
+[node name="ButtonRow" type="HBoxContainer" parent="Panel/Margin/RootVBox/LoginRoot" unique_id=1560284597]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "当前服务器：未选择"
-horizontal_alignment = 1
+theme_override_constants/separation = 8
 
-[node name="SelectServerButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=891020124]
-custom_minimum_size = Vector2(500, 58)
+[node name="LoginButton" type="Button" parent="Panel/Margin/RootVBox/LoginRoot/ButtonRow" unique_id=102210740]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "选择服务器"
-
-[node name="Buttons" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=167174732]
-layout_mode = 2
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="ConnectButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=236321602]
-custom_minimum_size = Vector2(156, 58)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "连接"
-
-[node name="LoginButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=969195767]
-custom_minimum_size = Vector2(156, 58)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
+size_flags_horizontal = 3
 text = "登录"
 
-[node name="DisconnectButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons" unique_id=439408157]
-custom_minimum_size = Vector2(156, 58)
+[node name="RegisterButton" type="Button" parent="Panel/Margin/RootVBox/LoginRoot/ButtonRow" unique_id=407210565]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "断开"
+size_flags_horizontal = 3
+text = "注册"
 
-[node name="StatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=511610764]
+[node name="ServerRoot" type="VBoxContainer" parent="Panel/Margin/RootVBox" unique_id=624798497]
+visible = false
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "状态：未连接"
+theme_override_constants/separation = 10
+
+[node name="CurrentServerLabel" type="Label" parent="Panel/Margin/RootVBox/ServerRoot" unique_id=320434408]
+layout_mode = 2
+text = "当前服务器：-"
+autowrap_mode = 3
+
+[node name="ServerButtonRow" type="HBoxContainer" parent="Panel/Margin/RootVBox/ServerRoot" unique_id=460360509]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OpenServerListButton" type="Button" parent="Panel/Margin/RootVBox/ServerRoot/ServerButtonRow" unique_id=1983054587]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "选择服务器"
+
+[node name="EnterGameButton" type="Button" parent="Panel/Margin/RootVBox/ServerRoot/ServerButtonRow" unique_id=269110614]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "进入游戏"
+
+[node name="StatusLabel" type="Label" parent="Panel/Margin/RootVBox" unique_id=1512307327]
+layout_mode = 2
+text = "状态：等待登录"
+autowrap_mode = 3
+
+[node name="ServerListPopup" type="PopupPanel" parent="." unique_id=1651628643]
+oversampling_override = 1.0
+size = Vector2i(420, 420)
+
+[node name="Margin" type="MarginContainer" parent="ServerListPopup" unique_id=962474603]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 416.0
+offset_bottom = 416.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ServerListPopup/Margin" unique_id=1403363027]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PopupTitle" type="Label" parent="ServerListPopup/Margin/VBox" unique_id=1969740355]
+layout_mode = 2
+text = "服务器列表"
 horizontal_alignment = 1
 
-[node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=312870688]
-custom_minimum_size = Vector2(500, 58)
+[node name="ServerItemList" type="ItemList" parent="ServerListPopup/Margin/VBox" unique_id=1327369658]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "返回"
+size_flags_vertical = 3
 
-[node name="ServerSelectPopup" parent="." unique_id=980277749 instance=ExtResource("2_jaj85")]
-visible = false
-layout_mode = 1
+[node name="PopupButtonRow" type="HBoxContainer" parent="ServerListPopup/Margin/VBox" unique_id=62137362]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ConfirmButton" type="Button" parent="ServerListPopup/Margin/VBox/PopupButtonRow" unique_id=697729900]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "确认"
+
+[node name="CancelButton" type="Button" parent="ServerListPopup/Margin/VBox/PopupButtonRow" unique_id=365530912]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "取消"
