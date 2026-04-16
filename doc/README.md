@@ -5,21 +5,21 @@
 
 ## TL;DR（先看这里）
 
-- 业务代码只进 `src/`
-- 纯资源只进 `assets/`
+- GDScript 业务代码只进 `src/`
+- C# 网络底层只进 `script/network/`
 - 第三方插件只进 `addons/`
-- 平台相关文件只进 `platform/`
-- 构建产物只进 `build/`（可再生，不当源码）
+- 当前项目文档只进 `doc/`
 
 ---
 
 ## 快速导航
 
 - 想加新功能：看 `src/modules/`
-- 想改公共能力：看 `src/core/`、`src/shared/`
-- 想换图/音频/字体：看 `assets/`
-- 想处理微信导出：看 `platform/wechat/`
-- 想看规范文档：看 `doc/`
+- 想改公共能力：看 `src/core/`
+- 想改 C# 网络传输/HTTP：看 `script/network/`
+- 想改登录到选服链路：看 `src/modules/login/` + `src/core/net/facade/`
+- 想看迁移参考（U3D/Lua）：看 `docs/`
+- 想看规范文档：看 `doc/README.md` 与 `.cursor/rules/`
 
 ---
 
@@ -27,18 +27,32 @@
 
 ```text
 SANHAI/
-├─ src/                         # 运行时代码与场景（主开发区）
-│  ├─ modules/                  # 功能模块（menu / gameplay / battle）
-│  ├─ core/                     # 全局基础能力（autoload / config / save）
-│  └─ shared/                   # 可复用组件与通用脚本
-├─ assets/                      # 纯资源（图片 / 音频 / 字体 / 特效 / 本地化）
-├─ addons/                      # Godot 插件（引擎约定目录）
-├─ platform/                    # 平台发布资料（非运行时代码）
-│  └─ wechat/
-│     ├─ export_presets/        # 微信导出预设与配置备份
-│     ├─ templates/             # 微信模板包（*.tpz）及分发文件
-│     └─ docs/                  # 接入 / 导出 / 提审流程说明
-├─ build/                       # 导出产物（可删除再生成）
-├─ doc/                         # 项目文档（架构 / 规范 / 流程）
-├─ .godot/                      # Godot 自动生成缓存（通常不手改）
-└─ .cursor/                     # AI 规则与本地辅助配置
+├─ src/                                 # Godot GDScript 主代码
+│  ├─ core/
+│  │  ├─ font/                          # 字体服务
+│  │  ├─ mvc/                           # MVC 基类与管理器
+│  │  └─ net/                           # 网络中间层（GD）
+│  │     ├─ facade/                     # facade/service 层
+│  │     ├─ dispatch/                   # 请求分发与超时处理
+│  │     ├─ protocol/                   # 编解码入口（当前 JSON，后续可切 PB）
+│  │     └─ transport/                  # WebSocket/KCP 传输适配
+│  └─ modules/
+│     ├─ <module_name>/                 # 业务模块（示意）
+│     │  ├─ core/                       # 领域/流程逻辑 + MVC 控制器（Controller 也放 core）
+│     │  └─ view/                       # 规范：场景(.tscn)与挂载脚本(.gd)必须同名（如 LoginPanel.tscn + LoginPanel.gd）
+│     └─ startgame/                     # 游戏启动编排入口（注册控制器、调用 on_game_start）
+├─ script/
+│  └─ network/                          # C# 网络底层（Socket/HTTP/Crypto/KCP）
+├─ doc/                                 # 当前项目文档（本文件等）
+├─ docs/                                # 迁移参考（旧 U3D C# / XLua Lua）
+├─ addons/                              # Godot 插件
+├─ .godot/                              # Godot 自动生成缓存（通常不手改）
+└─ .cursor/                             # AI 规则与本地辅助配置
+```
+
+## 命名规范（模块内）
+
+- `view` 层：场景文件与挂载脚本必须同名（如 `LoginPanel.tscn` + `LoginPanel.gd`）
+- `core` 层 Controller：文件名必须为 `*Controller.gd`（如 `LoginController.gd`、`HomeTestController.gd`）
+- Controller 类名：必须与文件名一致并使用 `PascalCase`（如 `class_name LoginController`）
+- Controller 继承：统一继承 `BaseController`，并实现生命周期方法（`on_game_start/on_login/on_reconnection/on_login_out/on_release`）

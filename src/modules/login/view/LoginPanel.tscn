@@ -1,6 +1,13 @@
 [gd_scene format=3 uid="uid://d3ypoy3xv4r7u"]
 
-[ext_resource type="Script" uid="uid://5chogb34kews" path="res://src/modules/login/view/GameLoginPanel.gd" id="1_1xy0f"]
+[ext_resource type="Script" uid="uid://5chogb34kews" path="res://src/modules/login/view/LoginPanel.gd" id="1_1xy0f"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u6b3a"]
+bg_color = Color(0.42, 0.36, 0.31, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="Login" type="Control" unique_id=308276987]
 layout_mode = 3
@@ -24,6 +31,7 @@ offset_right = 240.0
 offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_u6b3a")
 
 [node name="Margin" type="MarginContainer" parent="Panel" unique_id=711015208]
 layout_mode = 2

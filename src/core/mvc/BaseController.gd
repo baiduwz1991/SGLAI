@@ -13,8 +13,8 @@ func on_game_start() -> void:
 	_report_abstract_method("on_game_start")
 
 
-func on_login(back: Callable = Callable()) -> void:
-	_report_abstract_method("on_login")
+func on_game_server_login(back: Callable = Callable()) -> void:
+	_report_abstract_method("on_game_server_login")
 	_call_back(back)
 
 
@@ -23,12 +23,12 @@ func on_reconnection(back: Callable = Callable()) -> void:
 	_call_back(back)
 
 
-func get_login_dependencies() -> Array[StringName]:
+func get_game_server_login_dependencies() -> Array[StringName]:
 	return []
 
 
 func get_reconnection_dependencies() -> Array[StringName]:
-	return get_login_dependencies()
+	return get_game_server_login_dependencies()
 
 
 func on_login_out() -> void:

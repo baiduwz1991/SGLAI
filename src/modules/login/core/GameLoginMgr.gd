@@ -1,10 +1,10 @@
 class_name GameLoginMgr
 extends RefCounted
 
-const LoginFlowStateScript: Script = preload("res://src/modules/login/core/login_flow_state.gd")
+const LoginFlowStateScript: Script = preload("res://src/modules/login/core/LoginFlowState.gd")
 const ServerListMapperScript: Script = preload("res://src/core/net/facade/server_list_mapper.gd")
-const ServerListRequestBuilderScript: Script = preload("res://src/modules/login/core/server_list_request_builder.gd")
-const ServerSelectionServiceScript: Script = preload("res://src/modules/login/core/server_selection_service.gd")
+const ServerListRequestBuilderScript: Script = preload("res://src/modules/login/core/ServerListRequestBuilder.gd")
+const ServerSelectionServiceScript: Script = preload("res://src/modules/login/core/ServerSelectionService.gd")
 
 ## 登录状态变化通知（用于面板刷新提示文案）。
 signal login_state_changed(state: StringName, message: String)
@@ -99,6 +99,11 @@ func request_server_list() -> void:
 	login_state_changed.emit(_state, "正在拉取服务器列表...")
 	platform.call("request_server_list", request_data, _on_server_list_response)
 	print("[GameLoginMgr] 服务器列表请求参数: %s" % JSON.stringify(request_data))
+
+
+func mark_login_flow_completed() -> void:
+	_state = LoginFlowStateScript.FLOW_COMPLETED
+	login_state_changed.emit(_state, "登录主流程完成")
 
 
 func get_current_server() -> Dictionary:

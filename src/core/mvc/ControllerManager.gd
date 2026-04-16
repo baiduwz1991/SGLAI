@@ -21,6 +21,7 @@ var _phase_back: Callable = Callable()
 func register_controller(controller: BaseController) -> void:
 	var controller_id: StringName = controller.get_id()
 	_controllers[controller_id] = controller
+	_log_lifecycle("register_controller -> %s" % String(controller_id))
 	if not _controller_dependencies.has(controller_id):
 		_controller_dependencies[controller_id] = []
 
@@ -51,6 +52,7 @@ func get_controller(controller_id: StringName) -> BaseController:
 
 func unregister_controller(controller_id: StringName) -> void:
 	if has_controller(controller_id):
+		_log_lifecycle("unregister_controller -> %s" % String(controller_id))
 		var controller: BaseController = _controllers[controller_id]
 		controller.on_release()
 	_controllers.erase(controller_id)
@@ -58,6 +60,7 @@ func unregister_controller(controller_id: StringName) -> void:
 
 
 func clear_controllers() -> void:
+	_log_lifecycle("clear_controllers -> total=%d" % _controllers.size())
 	for controller in _controllers.values():
 		controller.on_release()
 	_controllers.clear()
@@ -65,21 +68,27 @@ func clear_controllers() -> void:
 
 
 func notify_game_start() -> void:
+	_log_lifecycle("notify_game_start -> total=%d" % _controllers.size())
 	for controller in _controllers.values():
+		_log_lifecycle("on_game_start -> %s" % String(controller.get_id()))
 		controller.on_game_start()
 
 
-func notify_login(back: Callable = Callable()) -> void:
-	_start_phase(&"on_login", back)
+func notify_game_server_login(back: Callable = Callable()) -> void:
+	_log_lifecycle("notify_game_server_login")
+	_start_phase(&"on_game_server_login", back)
 
 
 func notify_reconnection(back: Callable = Callable()) -> void:
+	_log_lifecycle("notify_reconnection")
 	_start_phase(&"on_reconnection", back)
 
 
 func notify_login_out() -> void:
+	_log_lifecycle("notify_login_out -> total=%d" % _controllers.size())
 	clear_phase_state()
 	for controller in _controllers.values():
+		_log_lifecycle("on_login_out -> %s" % String(controller.get_id()))
 		controller.on_login_out()
 
 
@@ -134,6 +143,7 @@ func _start_phase(method_name: StringName, back: Callable) -> void:
 	clear_phase_state()
 	_current_phase_method = method_name
 	_phase_back = back
+	_log_lifecycle("phase_start -> %s" % String(method_name))
 	_build_phase_graph(method_name)
 
 	if _phase_total_count == 0:
@@ -189,6 +199,7 @@ func _start_controller(controller_id: StringName) -> void:
 
 	_phase_in_progress[controller_id] = true
 	_register_timeout(controller_id)
+	_log_lifecycle("phase_call -> %s.%s" % [String(controller_id), String(_current_phase_method)])
 	controller.call(String(_current_phase_method), Callable(self, "_on_controller_done").bind(controller_id))
 
 
@@ -200,8 +211,12 @@ func _on_controller_done(controller_id: StringName) -> void:
 	_phase_in_progress[controller_id] = false
 	_phase_done[controller_id] = true
 	_phase_completed_count += 1
+	_log_lifecycle(
+		"phase_done -> %s (%d/%d)"
+		% [String(controller_id), _phase_completed_count, _phase_total_count]
+	)
 
-	var dependent_ids: Array[StringName] = _phase_dependents.get(controller_id, [])
+	var dependent_ids: Array[StringName] = _to_string_name_array(_phase_dependents.get(controller_id, []))
 	for dependent_id in dependent_ids:
 		if _can_start_controller(dependent_id):
 			_enqueue_controller_start(dependent_id)
@@ -216,11 +231,13 @@ func _on_phase_timeout(controller_id: StringName) -> void:
 	if _phase_done.get(controller_id, false):
 		return
 	push_warning("ControllerManager 流程超时，自动继续：%s" % String(controller_id))
+	_log_lifecycle("phase_timeout -> %s.%s" % [String(controller_id), String(_current_phase_method)])
 	_on_controller_done(controller_id)
 
 
 func _finish_phase() -> void:
 	var back: Callable = _phase_back
+	_log_lifecycle("phase_finish -> %s" % String(_current_phase_method))
 	clear_phase_state()
 	_call_back(back)
 
@@ -231,7 +248,7 @@ func _can_start_controller(controller_id: StringName) -> bool:
 	if _phase_in_progress.get(controller_id, false):
 		return false
 
-	var dependencies: Array[StringName] = _phase_dependencies.get(controller_id, [])
+	var dependencies: Array[StringName] = _to_string_name_array(_phase_dependencies.get(controller_id, []))
 	for dependency_id in dependencies:
 		if not _phase_done.get(dependency_id, false):
 			return false
@@ -240,15 +257,15 @@ func _can_start_controller(controller_id: StringName) -> bool:
 
 func _resolve_dependencies(controller_id: StringName, method_name: StringName) -> Array[StringName]:
 	var dependencies: Array[StringName] = []
-	var manual_dependencies: Array[StringName] = _controller_dependencies.get(controller_id, [])
+	var manual_dependencies: Array[StringName] = _to_string_name_array(_controller_dependencies.get(controller_id, []))
 	for dependency_id in manual_dependencies:
 		dependencies.append(dependency_id)
 
 	var controller: BaseController = _controllers.get(controller_id, null)
 	if controller != null:
 		var controller_dependencies: Array[StringName] = []
-		if method_name == &"on_login":
-			controller_dependencies = controller.get_login_dependencies()
+		if method_name == &"on_game_server_login":
+			controller_dependencies = controller.get_game_server_login_dependencies()
 		elif method_name == &"on_reconnection":
 			controller_dependencies = controller.get_reconnection_dependencies()
 		for dependency_id in controller_dependencies:
@@ -286,3 +303,18 @@ func _unregister_timeout(controller_id: StringName) -> void:
 func _call_back(back: Callable) -> void:
 	if back.is_valid():
 		back.call()
+
+
+func _to_string_name_array(value: Variant) -> Array[StringName]:
+	var result: Array[StringName] = []
+	if not (value is Array):
+		return result
+	for item in value as Array:
+		result.append(StringName(item))
+	return result
+
+
+func _log_lifecycle(message: String) -> void:
+	if not OS.has_feature("debug"):
+		return
+	print("[ControllerManager][Lifecycle] %s" % message)

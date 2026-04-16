@@ -1,14 +1,12 @@
-class_name GameLoginPanel
+class_name LoginPanel
 extends Control
 
 @export var default_username: String = "yy@y1.yy"
 @export var default_password: String = "yy"
 
-const GAME_LOGIN_MGR_SCRIPT: Script = preload("res://src/modules/login/core/GameLoginMgr.gd")
-const LOGIN_NODE_SCRIPT: Script = preload("res://src/modules/login/core/LoginNode.gd")
+const HOME_TEST_SCENE_PATH: String = "res://src/modules/homeTest/view/HomeTestPanel.tscn"
 
-var _game_login_mgr: RefCounted = GAME_LOGIN_MGR_SCRIPT.new()
-var _login_node: Node
+var _login_controller: LoginController = null
 var _popup_server_candidates: Array[Dictionary] = []
 
 @onready var _status_label: Label = get_node_or_null("Panel/Margin/RootVBox/StatusLabel")
@@ -31,16 +29,17 @@ var _popup_server_candidates: Array[Dictionary] = []
 
 
 func _ready() -> void:
-	_game_login_mgr.init()
-	_game_login_mgr.login_state_changed.connect(_on_login_state_changed)
-	_game_login_mgr.login_failed.connect(_on_login_failed)
-	_game_login_mgr.server_list_ready.connect(_on_server_list_ready)
-
-	_login_node = LOGIN_NODE_SCRIPT.new()
-	_login_node.game_login_mgr = _game_login_mgr
-	_login_node.login_flow_completed.connect(_on_login_flow_completed)
-	_login_node.login_flow_failed.connect(_on_login_flow_failed)
-	add_child(_login_node)
+	var controller: BaseController = ControllerManager.get_controller(LoginController.CONTROLLER_ID)
+	_login_controller = controller as LoginController
+	if _login_controller == null:
+		push_error("LoginPanel 初始化失败：LoginController 未注册到 ControllerManager。")
+		return
+	_login_controller.bind_host(self)
+	_login_controller.login_state_changed.connect(_on_login_state_changed)
+	_login_controller.login_failed.connect(_on_login_failed)
+	_login_controller.server_list_ready.connect(_on_server_list_ready)
+	_login_controller.login_flow_completed.connect(_on_login_flow_completed)
+	_login_controller.login_flow_failed.connect(_on_login_flow_failed)
 
 	if _username_input != null:
 		_username_input.text = default_username
@@ -66,13 +65,13 @@ func _ready() -> void:
 
 ## 对齐 Lua 流程：RefreshView() 先 Clear()，再 RequestLogin()。
 func refresh_view() -> void:
-	_game_login_mgr.clear()
+	_login_controller.reset_login_context()
 	_switch_to_login_view()
 	_set_status_text("请输入账号密码，点击登录开始联调。")
 
 
 func on_click_start_game() -> void:
-	_login_node.try_login_game()
+	_enter_home_test_scene()
 
 
 func _on_login_button_pressed() -> void:
@@ -82,8 +81,7 @@ func _on_login_button_pressed() -> void:
 		username = _username_input.text.strip_edges()
 	if _password_input != null:
 		password = _password_input.text
-	_game_login_mgr.clear()
-	_game_login_mgr.request_login(username, password)
+	_login_controller.request_login(username, password)
 
 
 func _on_register_button_pressed() -> void:
@@ -93,8 +91,7 @@ func _on_register_button_pressed() -> void:
 		username = _username_input.text.strip_edges()
 	if _password_input != null:
 		password = _password_input.text
-	_game_login_mgr.clear()
-	_game_login_mgr.request_register(username, password)
+	_login_controller.request_register(username, password)
 
 
 func _on_open_server_list_button_pressed() -> void:
@@ -102,34 +99,34 @@ func _on_open_server_list_button_pressed() -> void:
 
 
 func _on_enter_game_button_pressed() -> void:
-	on_click_start_game()
+	_enter_home_test_scene()
 
 
 func _on_login_state_changed(_state: StringName, message: String) -> void:
-	print("[GameLoginPanel] %s" % message)
+	print("[LoginPanel] %s" % message)
 	_set_status_text(message)
 
 
 func _on_login_failed(error_payload: Dictionary) -> void:
-	push_warning("[GameLoginPanel] 登录失败：%s" % JSON.stringify(error_payload))
+	push_warning("[LoginPanel] 登录失败：%s" % JSON.stringify(error_payload))
 	_set_status_text("登录失败：%s" % JSON.stringify(error_payload))
 	_switch_to_login_view()
 
 
 func _on_server_list_ready() -> void:
-	print("[GameLoginPanel] 服表准备完成，进入选服界面。")
+	print("[LoginPanel] 服表准备完成，进入选服界面。")
 	_switch_to_server_view()
 	_refresh_current_server_label()
-	_set_status_text("请选择服务器，点击“进入游戏”发起网关登录。")
+	_set_status_text("请选择服务器，点击“进入游戏”直接进入 homeTest。")
 
 
 func _on_login_flow_completed(_init_payload: Dictionary) -> void:
-	print("[GameLoginPanel] 登录主流程完成，进入主场景或创角流程。")
+	print("[LoginPanel] 登录主流程完成，进入主场景或创角流程。")
 	_set_status_text("登录主流程完成，联调成功。")
 
 
 func _on_login_flow_failed(error_payload: Dictionary) -> void:
-	push_warning("[GameLoginPanel] 登录主流程失败：%s" % JSON.stringify(error_payload))
+	push_warning("[LoginPanel] 登录主流程失败：%s" % JSON.stringify(error_payload))
 	_set_status_text("登录主流程失败：%s" % JSON.stringify(error_payload))
 
 
@@ -137,7 +134,7 @@ func _open_server_popup() -> void:
 	if _server_popup == null or _server_item_list == null:
 		return
 
-	_popup_server_candidates = _game_login_mgr.get_server_list()
+	_popup_server_candidates = _login_controller.get_server_list()
 	_server_item_list.clear()
 	for server in _popup_server_candidates:
 		var server_name: String = str(server.get("server_name", "未命名服务器"))
@@ -175,7 +172,7 @@ func _apply_server_selection(index: int) -> void:
 	if index < 0 or index >= _popup_server_candidates.size():
 		return
 	var server_data: Dictionary = _popup_server_candidates[index]
-	_game_login_mgr.set_current_server(server_data)
+	_login_controller.set_current_server(server_data)
 	_refresh_current_server_label()
 	_set_status_text("已切换服务器：%s" % str(server_data.get("server_name", "未命名服务器")))
 	if _server_popup != null:
@@ -183,7 +180,7 @@ func _apply_server_selection(index: int) -> void:
 
 
 func _refresh_current_server_label() -> void:
-	var current_server: Dictionary = _game_login_mgr.get_current_server()
+	var current_server: Dictionary = _login_controller.get_current_server()
 	var server_name: String = str(current_server.get("server_name", "未命名服务器"))
 	var server_url: String = str(current_server.get("server_url", ""))
 	if _server_label != null:
@@ -207,3 +204,23 @@ func _switch_to_server_view() -> void:
 func _set_status_text(text: String) -> void:
 	if _status_label != null:
 		_status_label.text = text
+
+
+func _enter_home_test_scene() -> void:
+	var tree: SceneTree = get_tree()
+	if tree == null:
+		push_warning("[LoginPanel] SceneTree 不可用，无法进入 homeTest。")
+		return
+
+	var home_test_scene: PackedScene = load(HOME_TEST_SCENE_PATH) as PackedScene
+	if home_test_scene == null:
+		push_warning("[LoginPanel] 无法加载 homeTest 场景：%s" % HOME_TEST_SCENE_PATH)
+		return
+
+	# 临时测试链路：绕过网关登录，但显式触发所有控制器 on_game_server_login，
+	# 让控制器侧行为与“网关登录成功后”保持一致。
+	ControllerManager.notify_game_server_login(func() -> void:
+		var change_error: Error = tree.change_scene_to_packed(home_test_scene)
+		if change_error != OK:
+			push_warning("[LoginPanel] 切换到 homeTest 失败，错误码：%d" % int(change_error))
+	)
