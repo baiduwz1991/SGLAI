@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="SANHAI"
-run/main_scene="res://src/modules/startgame/view/StartGameScene.tscn"
+run/main_scene="res://src/core/ui-manager/UIBootstrap.tscn"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 UIFontService="*res://src/core/font/UIFontService.gd"
 ControllerManager="*res://src/core/mvc/ControllerManager.gd"
+UIManager="*res://src/core/ui-manager/UIManager.gd"
 NetSocket="*res://script/network/NetSocket.cs"
 HttpManager="*res://script/network/HttpManager.cs"
 Platform="*res://src/core/net/Platform.gd"

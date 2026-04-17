@@ -56,3 +56,4 @@ SANHAI/
 - `core` 层 Controller：文件名必须为 `*Controller.gd`（如 `LoginController.gd`、`HomeTestController.gd`）
 - Controller 类名：必须与文件名一致并使用 `PascalCase`（如 `class_name LoginController`）
 - Controller 继承：统一继承 `BaseController`，并实现生命周期方法（`on_game_start/on_login/on_reconnection/on_login_out/on_release`）
+- `BaseUI` 子类：生命周期实现统一使用 `#region 生命周期` 代码区块（详见 `doc/UI_LIFECYCLE.md`）

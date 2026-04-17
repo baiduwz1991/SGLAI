@@ -1,11 +1,13 @@
 class_name HomeTestPanel
-extends Control
+extends BaseUI
 
+#region 状态
 var _home_test_controller: HomeTestController = null
 @onready var _status_label: Label = get_node_or_null("SafeArea/RootVBox/StatusLabel")
+#endregion
 
-
-func _ready() -> void:
+#region 生命周期
+func on_ui_create(_params: Dictionary) -> void:
 	var controller: BaseController = ControllerManager.get_controller(HomeTestController.CONTROLLER_ID)
 	_home_test_controller = controller as HomeTestController
 	if _home_test_controller == null:
@@ -17,8 +19,9 @@ func _ready() -> void:
 	_bind_button("SafeArea/RootVBox/ButtonGrid/WorldButton", "世界")
 	_bind_button("SafeArea/RootVBox/ButtonGrid/GeneralButton", "武将")
 	_set_status("已进入 homeTest。")
+#endregion
 
-
+#region 交互与显示
 func _bind_button(path: NodePath, module_name: String) -> void:
 	var button: Button = get_node_or_null(path)
 	if button == null:
@@ -38,3 +41,4 @@ func _on_status_changed(message: String) -> void:
 func _set_status(message: String) -> void:
 	if _status_label != null:
 		_status_label.text = message
+#endregion

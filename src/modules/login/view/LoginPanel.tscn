@@ -9,7 +9,7 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="Login" type="Control" unique_id=308276987]
+[node name="LoginPanel" type="Control" unique_id=308276987]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

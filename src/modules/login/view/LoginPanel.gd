@@ -1,14 +1,18 @@
 class_name LoginPanel
-extends Control
+extends BaseUI
 
+#region 配置与常量
 @export var default_username: String = "yy@y1.yy"
 @export var default_password: String = "yy"
 
-const HOME_TEST_SCENE_PATH: String = "res://src/modules/homeTest/view/HomeTestPanel.tscn"
+const HOME_TEST_PAGE_ID: StringName = UIRegistry.HOME_TEST_PANEL
+#endregion
 
+#region 状态
 var _login_controller: LoginController = null
-var _popup_server_candidates: Array[Dictionary] = []
+#endregion
 
+#region 节点缓存
 @onready var _status_label: Label = get_node_or_null("Panel/Margin/RootVBox/StatusLabel")
 
 @onready var _login_root: VBoxContainer = get_node_or_null("Panel/Margin/RootVBox/LoginRoot")
@@ -21,14 +25,10 @@ var _popup_server_candidates: Array[Dictionary] = []
 @onready var _server_label: Label = get_node_or_null("Panel/Margin/RootVBox/ServerRoot/CurrentServerLabel")
 @onready var _open_server_list_button: Button = get_node_or_null("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/OpenServerListButton")
 @onready var _enter_game_button: Button = get_node_or_null("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/EnterGameButton")
+#endregion
 
-@onready var _server_popup: PopupPanel = get_node_or_null("ServerListPopup")
-@onready var _server_item_list: ItemList = get_node_or_null("ServerListPopup/Margin/VBox/ServerItemList")
-@onready var _server_popup_confirm_button: Button = get_node_or_null("ServerListPopup/Margin/VBox/PopupButtonRow/ConfirmButton")
-@onready var _server_popup_cancel_button: Button = get_node_or_null("ServerListPopup/Margin/VBox/PopupButtonRow/CancelButton")
-
-
-func _ready() -> void:
+#region 生命周期
+func on_ui_create(_params: Dictionary) -> void:
 	var controller: BaseController = ControllerManager.get_controller(LoginController.CONTROLLER_ID)
 	_login_controller = controller as LoginController
 	if _login_controller == null:
@@ -55,16 +55,17 @@ func _ready() -> void:
 		_open_server_list_button.pressed.connect(_on_open_server_list_button_pressed)
 	if _enter_game_button != null:
 		_enter_game_button.pressed.connect(_on_enter_game_button_pressed)
-	if _server_popup_confirm_button != null:
-		_server_popup_confirm_button.pressed.connect(_on_server_popup_confirm_pressed)
-	if _server_popup_cancel_button != null:
-		_server_popup_cancel_button.pressed.connect(_on_server_popup_cancel_pressed)
-	if _server_item_list != null:
-		_server_item_list.item_activated.connect(_on_server_item_activated)
 
 
+func on_ui_open(_params: Dictionary) -> void:
+	refresh_view()
+#endregion
+
+#region 业务流程
 ## 对齐 Lua 流程：RefreshView() 先 Clear()，再 RequestLogin()。
 func refresh_view() -> void:
+	if _login_controller == null:
+		return
 	_login_controller.reset_login_context()
 	_switch_to_login_view()
 	_set_status_text("请输入账号密码，点击登录开始联调。")
@@ -72,8 +73,9 @@ func refresh_view() -> void:
 
 func on_click_start_game() -> void:
 	_enter_home_test_scene()
+#endregion
 
-
+#region UI事件
 func _on_login_button_pressed() -> void:
 	var username: String = default_username
 	var password: String = default_password
@@ -128,57 +130,41 @@ func _on_login_flow_completed(_init_payload: Dictionary) -> void:
 func _on_login_flow_failed(error_payload: Dictionary) -> void:
 	push_warning("[LoginPanel] 登录主流程失败：%s" % JSON.stringify(error_payload))
 	_set_status_text("登录主流程失败：%s" % JSON.stringify(error_payload))
+#endregion
 
-
+#region 弹窗与选服
 func _open_server_popup() -> void:
-	if _server_popup == null or _server_item_list == null:
+	if _login_controller == null:
 		return
 
-	_popup_server_candidates = _login_controller.get_server_list()
-	_server_item_list.clear()
-	for server in _popup_server_candidates:
-		var server_name: String = str(server.get("server_name", "未命名服务器"))
-		var server_id: String = str(server.get("server_id", ""))
-		_server_item_list.add_item("%s (%s)" % [server_name, server_id])
-
-	if _popup_server_candidates.is_empty():
+	var server_candidates: Array[Dictionary] = _login_controller.get_server_list()
+	if server_candidates.is_empty():
 		_set_status_text("暂无可选服务器。")
 		return
 
-	_server_item_list.select(0)
-	_server_popup.popup_centered_ratio(0.6)
-
-
-func _on_server_popup_confirm_pressed() -> void:
-	if _server_item_list == null:
+	var popup_ui: BaseUI = UIManager.open_overlay(
+		UIRegistry.SERVER_LIST_POPUP,
+		{
+			"servers": server_candidates,
+			"current_server": _login_controller.get_current_server()
+		}
+	)
+	var server_popup: ServerListPopup = popup_ui as ServerListPopup
+	if server_popup == null:
+		push_warning("[LoginPanel] 打开 ServerListPopup 失败。")
 		return
-	var selected_indexes: PackedInt32Array = _server_item_list.get_selected_items()
-	if selected_indexes.is_empty():
-		_set_status_text("请先选择一个服务器。")
-		return
-	_apply_server_selection(selected_indexes[0])
+
+	if not server_popup.server_selected.is_connected(_on_server_selected):
+		server_popup.server_selected.connect(_on_server_selected)
 
 
-func _on_server_popup_cancel_pressed() -> void:
-	if _server_popup != null:
-		_server_popup.hide()
-
-
-func _on_server_item_activated(index: int) -> void:
-	_apply_server_selection(index)
-
-
-func _apply_server_selection(index: int) -> void:
-	if index < 0 or index >= _popup_server_candidates.size():
-		return
-	var server_data: Dictionary = _popup_server_candidates[index]
+func _on_server_selected(server_data: Dictionary) -> void:
 	_login_controller.set_current_server(server_data)
 	_refresh_current_server_label()
 	_set_status_text("已切换服务器：%s" % str(server_data.get("server_name", "未命名服务器")))
-	if _server_popup != null:
-		_server_popup.hide()
+#endregion
 
-
+#region 视图状态
 func _refresh_current_server_label() -> void:
 	var current_server: Dictionary = _login_controller.get_current_server()
 	var server_name: String = str(current_server.get("server_name", "未命名服务器"))
@@ -204,23 +190,15 @@ func _switch_to_server_view() -> void:
 func _set_status_text(text: String) -> void:
 	if _status_label != null:
 		_status_label.text = text
+#endregion
 
-
+#region 跳转
 func _enter_home_test_scene() -> void:
-	var tree: SceneTree = get_tree()
-	if tree == null:
-		push_warning("[LoginPanel] SceneTree 不可用，无法进入 homeTest。")
-		return
-
-	var home_test_scene: PackedScene = load(HOME_TEST_SCENE_PATH) as PackedScene
-	if home_test_scene == null:
-		push_warning("[LoginPanel] 无法加载 homeTest 场景：%s" % HOME_TEST_SCENE_PATH)
-		return
-
 	# 临时测试链路：绕过网关登录，但显式触发所有控制器 on_game_server_login，
 	# 让控制器侧行为与“网关登录成功后”保持一致。
 	ControllerManager.notify_game_server_login(func() -> void:
-		var change_error: Error = tree.change_scene_to_packed(home_test_scene)
-		if change_error != OK:
-			push_warning("[LoginPanel] 切换到 homeTest 失败，错误码：%d" % int(change_error))
+		var home_test_ui: BaseUI = UIManager.open_ui(HOME_TEST_PAGE_ID, {}, UIManager.MODE_REPLACE)
+		if home_test_ui == null:
+			push_warning("[LoginPanel] 打开 homeTest 页面失败。")
 	)
+#endregion

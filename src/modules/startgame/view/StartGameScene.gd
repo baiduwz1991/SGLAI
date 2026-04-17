@@ -1,14 +1,17 @@
 class_name StartGameScene
-extends Control
+extends BaseUI
 
-const LOGIN_PANEL_SCENE: PackedScene = preload("res://src/modules/login/view/LoginPanel.tscn")
+#region 常量
 const LOGIN_CONTROLLER_SCRIPT: Script = preload("res://src/modules/login/core/LoginController.gd")
 const HOME_TEST_CONTROLLER_SCRIPT: Script = preload("res://src/modules/homeTest/core/HomeTestController.gd")
+#endregion
 
-var _login_panel: Control = null
+#region 状态
+var _login_ui: BaseUI = null
+#endregion
 
-
-func _ready() -> void:
+#region 生命周期
+func on_ui_create(_params: Dictionary) -> void:
 	_register_all_controllers()
 
 	var platform: Node = get_tree().root.get_node_or_null("Platform")
@@ -25,8 +28,9 @@ func _ready() -> void:
 func _on_platform_init_completed() -> void:
 	ControllerManager.notify_game_start()
 	_try_open_login_panel_for_dev_test()
+#endregion
 
-
+#region 内部逻辑
 func _register_all_controllers() -> void:
 	ControllerManager.get_or_register_controller(
 		LoginController.CONTROLLER_ID,
@@ -51,13 +55,10 @@ func _is_dev_test_environment() -> bool:
 
 
 func _open_login_panel() -> void:
-	if is_instance_valid(_login_panel):
+	if is_instance_valid(_login_ui):
 		return
-	var panel_instance: Node = LOGIN_PANEL_SCENE.instantiate()
-	_login_panel = panel_instance as Control
-	if _login_panel == null:
-		push_error("StartGameScene 实例化 LoginPanel 失败。")
-		return
-	add_child(_login_panel)
-	if _login_panel.has_method("refresh_view"):
-		_login_panel.call("refresh_view")
+
+	_login_ui = UIManager.open_attach(ui_id, &"default", UIRegistry.LOGIN_PANEL, {})
+	if _login_ui == null:
+		push_error("StartGameScene 以 MODE_ATTACH 打开 LoginPanel 失败。")
+#endregion

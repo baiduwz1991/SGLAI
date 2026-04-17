@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://u52n0ucwustf"]
+
+[ext_resource type="Script" uid="uid://cs1joxyum173c" path="res://src/modules/login/view/ServerListPopup.gd" id="1_s5m7p"]
+
+[node name="ServerListPopup" type="Control" unique_id=1634665335]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_s5m7p")
+
+[node name="Mask" type="ColorRect" parent="." unique_id=2089015869]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.4509804)
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=2111455687]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -210.0
+offset_right = 210.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=1707503712]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin" unique_id=1198344106]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PopupTitle" type="Label" parent="Panel/Margin/VBox" unique_id=1968413129]
+layout_mode = 2
+text = "服务器列表"
+horizontal_alignment = 1
+
+[node name="ServerItemList" type="ItemList" parent="Panel/Margin/VBox" unique_id=1860665445]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HintLabel" type="Label" parent="Panel/Margin/VBox" unique_id=454218236]
+layout_mode = 2
+text = "请选择服务器。"
+horizontal_alignment = 1
+
+[node name="PopupButtonRow" type="HBoxContainer" parent="Panel/Margin/VBox" unique_id=451959348]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ConfirmButton" type="Button" parent="Panel/Margin/VBox/PopupButtonRow" unique_id=893990901]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "确认"
+
+[node name="CancelButton" type="Button" parent="Panel/Margin/VBox/PopupButtonRow" unique_id=383369497]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "取消"
