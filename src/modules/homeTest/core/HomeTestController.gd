@@ -26,7 +26,7 @@ func on_login_out() -> void:
 	pass
 
 
-func on_module_button_pressed(module_name: String) -> void:
-	var message: String = "点击了：%s" % module_name
+func on_module_tab_selected(module_name: String) -> void:
+	var message: String = "切换页签：%s" % module_name
 	print("[HomeTestController] %s" % message)
 	status_changed.emit(message)
