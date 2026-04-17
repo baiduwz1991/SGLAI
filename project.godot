@@ -18,7 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 UIFontService="*res://src/core/font/UIFontService.gd"
-ControllerManager="*res://src/core/mvc/ControllerManager.gd"
+ControllerManager="*res://src/core/controller-manager/ControllerManager.gd"
 UIManager="*res://src/core/ui-manager/UIManager.gd"
 NetSocket="*res://script/network/NetSocket.cs"
 HttpManager="*res://script/network/HttpManager.cs"

@@ -40,28 +40,28 @@ const _UI_REGISTRY: Dictionary[StringName, Dictionary] = {
 		"block_input": true
 	},
 	HOME_TAB_BACKPACK: {
-		"scene_path": "res://src/modules/homeTest/view/tabs/HomeBackpackTab.tscn",
+		"scene_path": "res://src/modules/backpack/view/HomeBackpackTab.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": false
 	},
 	HOME_TAB_BATTLE: {
-		"scene_path": "res://src/modules/homeTest/view/tabs/HomeBattleTab.tscn",
+		"scene_path": "res://src/modules/battle/view/HomeBattleTab.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": false
 	},
 	HOME_TAB_WORLD: {
-		"scene_path": "res://src/modules/homeTest/view/tabs/HomeWorldTab.tscn",
+		"scene_path": "res://src/modules/world/view/HomeWorldTab.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": false
 	},
 	HOME_TAB_GENERAL: {
-		"scene_path": "res://src/modules/homeTest/view/tabs/HomeGeneralTab.tscn",
+		"scene_path": "res://src/modules/general/view/HomeGeneralTab.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
