@@ -6,8 +6,9 @@
 ## TL;DR（先看这里）
 
 - GDScript 业务代码只进 `src/`
-- C# 网络底层只进 `script/network/`
+- GDScript 网络底层只进 `script/network/`
 - 第三方插件只进 `addons/`
+- 运行时资源（字体/图片等）统一放 `assets/`
 - 当前项目文档只进 `doc/`
 
 ---
@@ -16,7 +17,7 @@
 
 - 想加新功能：看 `src/modules/`
 - 想改公共能力：看 `src/core/`
-- 想改 C# 网络传输/HTTP：看 `script/network/`
+- 想改网络传输/HTTP：看 `script/network/`
 - 想改登录到选服链路：看 `src/modules/login/` + `src/core/net/facade/`
 - 想看迁移参考（U3D/Lua）：看 `docs/`
 - 想看规范文档：看 `doc/README.md` 与 `.cursor/rules/`
@@ -42,7 +43,8 @@ SANHAI/
 │     │  └─ view/                       # 规范：场景(.tscn)与挂载脚本(.gd)必须同名（如 LoginPanel.tscn + LoginPanel.gd）
 │     └─ startgame/                     # 游戏启动编排入口（注册控制器、调用 on_game_start）
 ├─ script/
-│  └─ network/                          # C# 网络底层（Socket/HTTP/Crypto/KCP）
+│  └─ network/                          # GDScript 网络底层（Socket/HTTP/Crypto/KCP）
+├─ assets/                              # 运行时资源（字体/图片等，参与导出）
 ├─ doc/                                 # 当前项目文档（本文件等）
 ├─ docs/                                # 迁移参考（旧 U3D C# / XLua Lua）
 ├─ addons/                              # Godot 插件

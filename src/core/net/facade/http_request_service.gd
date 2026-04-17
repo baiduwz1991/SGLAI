@@ -16,7 +16,7 @@ const ACCOUNT_TYPE_GET_NOTICE_LIST: String = "eGetNoticeList"
 const ACCOUNT_TYPE_GET_PRIVACY_EXISTS: String = "eGetUserAppIdPrivacyPolicyExist"
 const ACCOUNT_TYPE_SAVE_PRIVACY: String = "eSaveUserAppIdPrivacyPolicy"
 
-var _csharp_http_manager: Object
+var _http_manager: Object
 var _next_request_id: int = 0
 var _pending_callbacks: Dictionary = {}
 
@@ -24,9 +24,9 @@ var _pending_callbacks: Dictionary = {}
 func _ready() -> void:
 	var tree: SceneTree = get_tree()
 	if tree != null:
-		_csharp_http_manager = tree.root.get_node_or_null("HttpManager")
-	if _csharp_http_manager != null and _csharp_http_manager.has_signal("RequestCompleted"):
-		_csharp_http_manager.connect("RequestCompleted", Callable(self, "_on_csharp_request_completed"))
+		_http_manager = tree.root.get_node_or_null("HttpManager")
+	if _http_manager != null and _http_manager.has_signal("RequestCompleted"):
+		_http_manager.connect("RequestCompleted", Callable(self, "_on_request_completed"))
 
 
 func request(params: Dictionary) -> void:
@@ -74,14 +74,14 @@ func request(params: Dictionary) -> void:
 		post_body
 	])
 
-	if _csharp_http_manager != null and _csharp_http_manager.has_method("RequestAsyncById"):
+	if _http_manager != null and _http_manager.has_method("RequestAsyncById"):
 		_next_request_id += 1
 		var request_id: int = _next_request_id
 		_pending_callbacks[request_id] = {
 			"callback": callback,
 			"module_name": module_name
 		}
-		_csharp_http_manager.call(
+		_http_manager.call(
 			"RequestAsyncById",
 			request_id,
 			HTTP_METHOD_GET if method == HTTP_METHOD_GET else HTTP_METHOD_POST,
@@ -92,7 +92,7 @@ func request(params: Dictionary) -> void:
 		)
 		return
 
-	_fail_callback(callback, "csharp_http_manager_unavailable", module_name)
+	_fail_callback(callback, "http_manager_unavailable", module_name)
 
 
 func _encode_query_string(params: Dictionary) -> String:
@@ -114,7 +114,7 @@ func _fail_callback(callback: Callable, reason: String, module_name: String) -> 
 		})
 
 
-func _on_csharp_request_completed(request_id: int, result: Dictionary) -> void:
+func _on_request_completed(request_id: int, result: Dictionary) -> void:
 	if not _pending_callbacks.has(request_id):
 		return
 

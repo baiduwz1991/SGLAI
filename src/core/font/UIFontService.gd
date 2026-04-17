@@ -1,7 +1,7 @@
 extends Node
 
 const CANDIDATE_FONT_PATHS: PackedStringArray = [
-	"res://assests/fonts/TDLJ_Font_GBK.ttf",
+	"res://assets/fonts/TDLJ_Font_GBK.ttf",
 	"res://assets/fonts/NotoSansSC-Regular.ttf",
 	"res://assets/fonts/SourceHanSansSC-Regular.otf",
 	"res://assets/fonts/msyh.ttf"

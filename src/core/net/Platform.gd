@@ -19,6 +19,8 @@ signal init_completed
 @export var login_key: String = "a0482eaf-14e8-4a65-950e-864214f62da5"
 @export var resource_version_name: String = "dev"
 @export var game_center_url: String = "https://loginservertest-lang-dsn.7qule.com/Api/ServerList_Client.ashx"
+@export var use_wechat_auth_flow: bool = false
+@export var wechat_flow_fallback_to_account_login: bool = true
 
 var _http_service: HttpRequestService
 var _adapter: PlatformNetAdapter
@@ -41,6 +43,13 @@ func init() -> void:
 
 
 func login(username: String, _password: String) -> void:
+	if use_wechat_auth_flow:
+		_login_with_wechat_auth(username, _password)
+		return
+	_login_with_account(username, _password)
+
+
+func _login_with_account(username: String, _password: String) -> void:
 	if username.is_empty():
 		login_failed.emit({
 			"reason": "username_is_empty"
@@ -80,6 +89,17 @@ func login(username: String, _password: String) -> void:
 			var payload: Dictionary = _adapter.build_login_payload(user_id, user_id, login_info)
 			login_completed.emit(payload)
 	)
+
+
+func _login_with_wechat_auth(username: String, _password: String) -> void:
+	# 预留微信平台授权登录分流。当前阶段默认回落到账号流程，保证小游戏与开发端链路一致。
+	push_warning("[Platform] use_wechat_auth_flow=true，但微信授权链路尚未接入，回落账号登录流程。")
+	if wechat_flow_fallback_to_account_login:
+		_login_with_account(username, _password)
+		return
+	login_failed.emit({
+		"reason": "wechat_auth_flow_not_implemented"
+	})
 
 
 func register_account(username: String, _password: String) -> void:

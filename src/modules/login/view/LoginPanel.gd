@@ -42,9 +42,10 @@ func on_ui_create(_params: Dictionary) -> void:
 	_login_controller.login_flow_failed.connect(_on_login_flow_failed)
 
 	if _username_input != null:
-		_username_input.text = default_username
+		_username_input.focus_entered.connect(_on_username_focus_entered)
 	if _password_input != null:
-		_password_input.text = default_password
+		_password_input.focus_entered.connect(_on_password_focus_entered)
+	_apply_default_credentials_if_needed()
 	_switch_to_login_view()
 
 	if _login_button != null:
@@ -190,6 +191,35 @@ func _switch_to_server_view() -> void:
 func _set_status_text(text: String) -> void:
 	if _status_label != null:
 		_status_label.text = text
+#endregion
+
+
+#region 输入体验
+func _apply_default_credentials_if_needed() -> void:
+	if _username_input == null or _password_input == null:
+		return
+	if _should_prefill_credentials():
+		_username_input.text = default_username
+		_password_input.text = default_password
+		return
+	# 微信/Web 端避免预填文本，规避输入桥接“只能追加不可删除”的问题。
+	_username_input.clear()
+	_password_input.clear()
+
+
+func _should_prefill_credentials() -> bool:
+	# 仅在编辑器/调试环境预填联调账号，发布端（尤其 Web/微信）不预填。
+	return OS.has_feature("editor") or OS.has_feature("debug")
+
+
+func _on_username_focus_entered() -> void:
+	if _username_input != null:
+		_username_input.select_all()
+
+
+func _on_password_focus_entered() -> void:
+	if _password_input != null:
+		_password_input.select_all()
 #endregion
 
 #region 跳转
