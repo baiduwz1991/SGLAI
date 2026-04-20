@@ -15,6 +15,10 @@ var arrange_type: int = TypesScript.ListItemArrangeType.TOP_TO_BOTTOM
 @export var distance_for_new1: float = 200.0
 @export var enable_touch_drag_scroll: bool = true
 @export var drag_scroll_deadzone: float = 6.0
+@export var enable_inertia_scroll: bool = true
+@export var inertia_release_boost: float = 28.0
+@export var inertia_damping: float = 8.0
+@export var inertia_min_speed: float = 8.0
 @export var hide_scroll_bars: bool = true
 @export var item_scene: PackedScene
 @export var content_path: NodePath = ^"Content"
@@ -39,6 +43,8 @@ var _dragging: bool = false
 var _drag_pointer_id: int = -1
 var _drag_last_pos: Vector2 = Vector2.ZERO
 var _drag_accum_distance: float = 0.0
+var _last_drag_offset_delta: float = 0.0
+var _inertia_velocity: float = 0.0
 var _needs_refresh: bool = true
 var _last_refresh_offset: float = -1.0
 var _last_viewport_size: float = -1.0
@@ -56,6 +62,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if not _list_view_inited:
 		return
+	_apply_inertia(_delta)
 	if _pending_auto_anchor_frames > 0 and not _dragging:
 		_apply_reset_anchor()
 		_pending_auto_anchor_frames -= 1
@@ -544,6 +551,8 @@ func _is_reverse_arrange() -> bool:
 
 func _start_drag(pointer_id: int, global_pos: Vector2) -> void:
 	_pending_auto_anchor_frames = 0
+	_inertia_velocity = 0.0
+	_last_drag_offset_delta = 0.0
 	_dragging = true
 	_drag_pointer_id = pointer_id
 	_drag_last_pos = global_pos
@@ -551,6 +560,10 @@ func _start_drag(pointer_id: int, global_pos: Vector2) -> void:
 
 
 func _stop_drag() -> void:
+	if enable_inertia_scroll and _drag_accum_distance >= drag_scroll_deadzone:
+		_inertia_velocity = _last_drag_offset_delta * inertia_release_boost
+	else:
+		_inertia_velocity = 0.0
 	_dragging = false
 	_drag_pointer_id = -1
 	_drag_accum_distance = 0.0
@@ -561,7 +574,10 @@ func _apply_drag_delta(delta: Vector2) -> void:
 	_drag_accum_distance += absf(axis_delta)
 	if _drag_accum_distance < drag_scroll_deadzone:
 		return
+	var old_offset: float = _get_content_offset()
 	_set_content_offset(_get_content_offset() - axis_delta)
+	var new_offset: float = _get_content_offset()
+	_last_drag_offset_delta = new_offset - old_offset
 	_refresh_window()
 
 
@@ -582,3 +598,19 @@ func _apply_reset_anchor() -> void:
 		_set_content_offset(target)
 	else:
 		_set_content_offset(0.0)
+
+
+func _apply_inertia(delta: float) -> void:
+	if not enable_inertia_scroll or _dragging:
+		return
+	if absf(_inertia_velocity) < inertia_min_speed:
+		_inertia_velocity = 0.0
+		return
+	var old_offset: float = _get_content_offset()
+	_set_content_offset(old_offset + _inertia_velocity * delta)
+	var new_offset: float = _get_content_offset()
+	if is_equal_approx(old_offset, new_offset):
+		_inertia_velocity = 0.0
+		return
+	var damping_t: float = clampf(inertia_damping * delta, 0.0, 1.0)
+	_inertia_velocity = lerpf(_inertia_velocity, 0.0, damping_t)
