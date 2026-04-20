@@ -1,7 +1,7 @@
-class_name HomeTestController
+class_name HomeController
 extends BaseController
 
-const CONTROLLER_ID: StringName = &"home_test_controller"
+const CONTROLLER_ID: StringName = &"home_controller"
 
 signal status_changed(message: String)
 
@@ -11,7 +11,7 @@ func get_id() -> StringName:
 
 
 func on_game_start() -> void:
-	status_changed.emit("已进入 homeTest。")
+	status_changed.emit("已进入 home。")
 
 
 func on_game_server_login(back: Callable = Callable()) -> void:
@@ -28,5 +28,5 @@ func on_login_out() -> void:
 
 func on_module_tab_selected(module_name: String) -> void:
 	var message: String = "切换页签：%s" % module_name
-	print("[HomeTestController] %s" % message)
+	print("[HomeController] %s" % message)
 	status_changed.emit(message)

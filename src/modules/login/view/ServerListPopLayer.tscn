@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://u52n0ucwustf"]
 
-[ext_resource type="Script" uid="uid://cs1joxyum173c" path="res://src/modules/login/view/ServerListPopup.gd" id="1_s5m7p"]
+[ext_resource type="Script" uid="uid://cs1joxyum173c" path="res://src/modules/login/view/ServerListPopLayer.gd" id="1_s5m7p"]
 [ext_resource type="Script" uid="uid://h3mvkdi184ox" path="res://script/ui/super-scroll-view/LoopListView.gd" id="2_6kthf"]
 [ext_resource type="PackedScene" uid="uid://dgggypmeyj6ab" path="res://src/modules/login/view/ServerListItem.tscn" id="3_o1x3h"]
 
-[node name="ServerListPopup" type="Control" unique_id=1634665335]
+[node name="ServerListPopLayer" type="Control" unique_id=1634665335]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

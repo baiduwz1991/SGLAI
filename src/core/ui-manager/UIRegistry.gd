@@ -1,18 +1,19 @@
 class_name UIRegistry
 extends RefCounted
 
-const START_GAME_SCENE: StringName = &"START_GAME_SCENE"
+const START_GAME_LAYER: StringName = &"START_GAME_LAYER"
 const LOGIN_PANEL: StringName = &"LOGIN_PANEL"
-const SERVER_LIST_POPUP: StringName = &"SERVER_LIST_POPUP"
-const HOME_TEST_PANEL: StringName = &"HOME_TEST_PANEL"
-const HOME_TAB_BACKPACK: StringName = &"HOME_TAB_BACKPACK"
-const HOME_TAB_BATTLE: StringName = &"HOME_TAB_BATTLE"
-const HOME_TAB_WORLD: StringName = &"HOME_TAB_WORLD"
-const HOME_TAB_GENERAL: StringName = &"HOME_TAB_GENERAL"
+const SELECT_SERVER_PANEL: StringName = &"SELECT_SERVER_PANEL"
+const SERVER_LIST_POP_LAYER: StringName = &"SERVER_LIST_POP_LAYER"
+const HOME_LAYER: StringName = &"HOME_LAYER"
+const HOME_BACKPACK_TAB_CONTENT: StringName = &"HOME_BACKPACK_TAB_CONTENT"
+const HOME_BATTLE_TAB_CONTENT: StringName = &"HOME_BATTLE_TAB_CONTENT"
+const HOME_WORLD_TAB_CONTENT: StringName = &"HOME_WORLD_TAB_CONTENT"
+const HOME_GENERAL_TAB_CONTENT: StringName = &"HOME_GENERAL_TAB_CONTENT"
 
 const _UI_REGISTRY: Dictionary[StringName, Dictionary] = {
-	START_GAME_SCENE: {
-		"scene_path": "res://src/modules/startgame/view/StartGameScene.tscn",
+	START_GAME_LAYER: {
+		"scene_path": "res://src/modules/startgame/view/StartGameLayer.tscn",
 		"default_mode": &"replace",
 		"layer": &"main",
 		"allow_multi_instance": false,
@@ -25,43 +26,50 @@ const _UI_REGISTRY: Dictionary[StringName, Dictionary] = {
 		"allow_multi_instance": false,
 		"block_input": true
 	},
-	SERVER_LIST_POPUP: {
-		"scene_path": "res://src/modules/login/view/ServerListPopup.tscn",
+	SELECT_SERVER_PANEL: {
+		"scene_path": "res://src/modules/login/view/SelectServerPanel.tscn",
+		"default_mode": &"attach",
+		"layer": &"main",
+		"allow_multi_instance": false,
+		"block_input": true
+	},
+	SERVER_LIST_POP_LAYER: {
+		"scene_path": "res://src/modules/login/view/ServerListPopLayer.tscn",
 		"default_mode": &"overlay",
 		"layer": &"overlay",
 		"allow_multi_instance": false,
 		"block_input": true
 	},
-	HOME_TEST_PANEL: {
-		"scene_path": "res://src/modules/homeTest/view/HomeTestPanel.tscn",
+	HOME_LAYER: {
+		"scene_path": "res://src/modules/home/view/HomeLayer.tscn",
 		"default_mode": &"replace",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": true
 	},
-	HOME_TAB_BACKPACK: {
-		"scene_path": "res://src/modules/backpack/view/HomeBackpackTab.tscn",
+	HOME_BACKPACK_TAB_CONTENT: {
+		"scene_path": "res://src/modules/backpack/view/HomeBackpackTabContent.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": false
 	},
-	HOME_TAB_BATTLE: {
-		"scene_path": "res://src/modules/battle/view/HomeBattleTab.tscn",
+	HOME_BATTLE_TAB_CONTENT: {
+		"scene_path": "res://src/modules/battle/view/HomeBattleTabContent.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": false
 	},
-	HOME_TAB_WORLD: {
-		"scene_path": "res://src/modules/world/view/HomeWorldTab.tscn",
+	HOME_WORLD_TAB_CONTENT: {
+		"scene_path": "res://src/modules/world/view/HomeWorldTabContent.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,
 		"block_input": false
 	},
-	HOME_TAB_GENERAL: {
-		"scene_path": "res://src/modules/general/view/HomeGeneralTab.tscn",
+	HOME_GENERAL_TAB_CONTENT: {
+		"scene_path": "res://src/modules/general/view/HomeGeneralTabContent.tscn",
 		"default_mode": &"attach",
 		"layer": &"main",
 		"allow_multi_instance": false,

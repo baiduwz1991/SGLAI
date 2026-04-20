@@ -2,7 +2,7 @@ extends Control
 
 #region 生命周期
 func _ready() -> void:
-	var start_ui: BaseUI = UIManager.open_ui(UIRegistry.START_GAME_SCENE, {}, UIManager.MODE_REPLACE)
+	var start_ui: BaseUI = UIManager.open_ui(UIRegistry.START_GAME_LAYER, {}, UIManager.MODE_REPLACE)
 	if start_ui == null:
 		push_error("UIBootstrap 启动失败：无法打开 START_GAME_SCENE。")
 		return

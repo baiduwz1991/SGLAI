@@ -1,4 +1,4 @@
-class_name ServerListPopup
+class_name ServerListPopLayer
 extends BaseUI
 
 signal server_selected(server_data: Dictionary)
@@ -110,8 +110,6 @@ func _build_item_payloads() -> Array[Dictionary]:
 		})
 		index += 1
 	return payloads
-
-
 #endregion
 
 

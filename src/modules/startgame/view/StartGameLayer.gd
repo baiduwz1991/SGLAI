@@ -1,9 +1,9 @@
-class_name StartGameScene
+class_name StartGameLayer
 extends BaseUI
 
 #region 常量
 const LOGIN_CONTROLLER_SCRIPT: Script = preload("res://src/modules/login/core/LoginController.gd")
-const HOME_TEST_CONTROLLER_SCRIPT: Script = preload("res://src/modules/homeTest/core/HomeTestController.gd")
+const HOME_CONTROLLER_SCRIPT: Script = preload("res://src/modules/home/core/HomeController.gd")
 #endregion
 
 #region 状态
@@ -18,7 +18,7 @@ func on_ui_create(_params: Dictionary) -> void:
 
 	var platform: Node = get_tree().root.get_node_or_null("Platform")
 	if platform == null:
-		push_warning("StartGameScene 未找到 Platform autoload，按开发模式直接进入登录界面。")
+		push_warning("StartGameLayer 未找到 Platform autoload，按开发模式直接进入登录界面。")
 		ControllerManager.notify_game_start()
 		_try_open_login_panel()
 		return
@@ -40,9 +40,9 @@ func _register_all_controllers() -> void:
 			return LOGIN_CONTROLLER_SCRIPT.new() as LoginController
 	)
 	ControllerManager.get_or_register_controller(
-		HomeTestController.CONTROLLER_ID,
+		HomeController.CONTROLLER_ID,
 		func() -> BaseController:
-			return HOME_TEST_CONTROLLER_SCRIPT.new() as HomeTestController
+			return HOME_CONTROLLER_SCRIPT.new() as HomeController
 	)
 
 
@@ -77,5 +77,5 @@ func _open_login_panel() -> void:
 
 	_login_ui = UIManager.open_attach(ui_id, &"default", UIRegistry.LOGIN_PANEL, {})
 	if _login_ui == null:
-		push_error("StartGameScene 以 MODE_ATTACH 打开 LoginPanel 失败。")
+		push_error("StartGameLayer 以 MODE_ATTACH 打开 LoginPanel 失败。")
 #endregion

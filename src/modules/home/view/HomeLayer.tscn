@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://d4lkorwxemny8"]
 
-[ext_resource type="Script" uid="uid://ljr6gmmdsl3y" path="res://src/modules/homeTest/view/HomeTestPanel.gd" id="1_8n7o1"]
+[ext_resource type="Script" uid="uid://ljr6gmmdsl3y" path="res://src/modules/home/view/HomeLayer.gd" id="1_8n7o1"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_tabs"]
 
-[node name="HomeTestPanel" type="Control" unique_id=1311207036]
+[node name="HomeLayer" type="Control" unique_id=1311207036]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

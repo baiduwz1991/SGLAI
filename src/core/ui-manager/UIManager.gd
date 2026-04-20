@@ -10,7 +10,7 @@ var _ui_root: Control = null
 var _main_layer: Control = null
 var _overlay_layer: Control = null
 
-@export var root_ui_id: StringName = UIRegistry.START_GAME_SCENE
+@export var root_ui_id: StringName = UIRegistry.START_GAME_LAYER
 
 var _ui_stack: Array[BaseUI] = []
 var _overlay_stack: Array[BaseUI] = []

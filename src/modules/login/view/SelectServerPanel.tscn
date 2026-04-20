@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://2tptjqq0xq70"]
+
+[ext_resource type="Script" uid="uid://mvh0igw7h6xj" path="res://src/modules/login/view/SelectServerPanel.gd" id="1_qxs0h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v2gw5"]
+bg_color = Color(0.16, 0.13, 0.1, 0.78)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="SelectServerPanel" type="Control" unique_id=643057438]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qxs0h")
+status_label_path = NodePath("BottomBar/StatusLabel")
+server_label_path = NodePath("CenterPanel/CenterMargin/CenterVBox/CurrentServerLabel")
+open_server_list_button_path = NodePath("CenterPanel/CenterMargin/CenterVBox/ServerButtonRow/OpenServerListButton")
+announcement_button_path = NodePath("TopBar/AnnouncementButton")
+enter_game_button_path = NodePath("CenterPanel/CenterMargin/CenterVBox/EnterGameButton")
+
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=890107179]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 64.0
+grow_horizontal = 2
+theme_override_constants/separation = 8
+
+[node name="TopSpacer" type="Control" parent="TopBar" unique_id=506479539]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="AnnouncementButton" type="Button" parent="TopBar" unique_id=1266488957]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "公告"
+
+[node name="CenterPanel" type="PanelContainer" parent="." unique_id=861856438]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -140.0
+offset_right = 280.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_v2gw5")
+
+[node name="CenterMargin" type="MarginContainer" parent="CenterPanel" unique_id=790774615]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="CenterVBox" type="VBoxContainer" parent="CenterPanel/CenterMargin" unique_id=1078080045]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterPanel/CenterMargin/CenterVBox" unique_id=801768456]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "请选择服务器"
+horizontal_alignment = 1
+
+[node name="CurrentServerLabel" type="Label" parent="CenterPanel/CenterMargin/CenterVBox" unique_id=1139085797]
+layout_mode = 2
+text = "当前服务器：未选择"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ServerButtonRow" type="HBoxContainer" parent="CenterPanel/CenterMargin/CenterVBox" unique_id=438586051]
+layout_mode = 2
+alignment = 1
+
+[node name="OpenServerListButton" type="Button" parent="CenterPanel/CenterMargin/CenterVBox/ServerButtonRow" unique_id=821989645]
+custom_minimum_size = Vector2(220, 44)
+layout_mode = 2
+text = "选择服务器"
+
+[node name="EnterGameButton" type="Button" parent="CenterPanel/CenterMargin/CenterVBox" unique_id=1975683430]
+custom_minimum_size = Vector2(320, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "进入游戏"
+
+[node name="BottomBar" type="MarginContainer" parent="." unique_id=522359576]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -72.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="StatusLabel" type="Label" parent="BottomBar" unique_id=1003156371]
+layout_mode = 2
+text = "状态：待选择服务器"
+horizontal_alignment = 1
+autowrap_mode = 3

@@ -5,7 +5,7 @@ alwaysApply: false
 owner: client-ui
 status: active
 last_updated: 2026-04-20
-version: 1.2.0
+version: 1.5.0
 ---
 
 # UI 脚本 Region 编码风格（src/modules）
@@ -58,7 +58,22 @@ version: 1.2.0
 
 ---
 
-## 4) 实施说明
+## 4) 命名约定
+
+- 命名与 `UIManager` 模式一一对应（类名、脚本文件、场景文件保持一致）：
+  1. 全屏界面（`MODE_REPLACE`）统一使用 `*Layer`
+  2. 弹窗界面（`MODE_OVERLAY`）统一使用 `*PopLayer`
+     - 若 `MODE_OVERLAY` 非弹窗语义，可使用 `*OverlayLayer`。
+  3. 附着内容页（`MODE_ATTACH`）统一使用 `*Panel` 
+     - 若 `MODE_ATTACH` tab页签内容语义，使用 `*TabContent`。
+- 示例：
+  - `class_name HomeLayer` / `HomeLayer.gd` / `HomeLayer.tscn`
+  - `class_name ServerListPopLayer` / `ServerListPopLayer.gd` / `ServerListPopLayer.tscn`
+  - `class_name HomeBattleTabContent` / `HomeBattleTabContent.gd` / `HomeBattleTabContent.tscn`
+
+---
+
+## 5) 实施说明
 
 - “最小模板”和“增量治理步骤”属于任务执行流程，统一下沉到：
   - `.cursor/skills/ui-view-task-routing/SKILL.md`

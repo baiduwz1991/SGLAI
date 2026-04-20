@@ -18,15 +18,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1xy0f")
 status_label_path = NodePath("Panel/Margin/RootVBox/StatusLabel")
-login_root_path = NodePath("Panel/Margin/RootVBox/LoginRoot")
-username_input_path = NodePath("Panel/Margin/RootVBox/LoginRoot/UsernameInput")
-password_input_path = NodePath("Panel/Margin/RootVBox/LoginRoot/PasswordInput")
-login_button_path = NodePath("Panel/Margin/RootVBox/LoginRoot/ButtonRow/LoginButton")
-register_button_path = NodePath("Panel/Margin/RootVBox/LoginRoot/ButtonRow/RegisterButton")
-server_root_path = NodePath("Panel/Margin/RootVBox/ServerRoot")
-server_label_path = NodePath("Panel/Margin/RootVBox/ServerRoot/CurrentServerLabel")
-open_server_list_button_path = NodePath("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/OpenServerListButton")
-enter_game_button_path = NodePath("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/EnterGameButton")
+username_input_path = NodePath("Panel/Margin/RootVBox/UsernameInput")
+password_input_path = NodePath("Panel/Margin/RootVBox/PasswordInput")
+login_button_path = NodePath("Panel/Margin/RootVBox/ButtonRow/LoginButton")
+register_button_path = NodePath("Panel/Margin/RootVBox/ButtonRow/RegisterButton")
 
 [node name="Panel" type="PanelContainer" parent="." unique_id=135923986]
 layout_mode = 1
@@ -60,99 +55,30 @@ theme_override_font_sizes/font_size = 24
 text = "登录联调面板"
 horizontal_alignment = 1
 
-[node name="LoginRoot" type="VBoxContainer" parent="Panel/Margin/RootVBox" unique_id=1591968874]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="UsernameInput" type="LineEdit" parent="Panel/Margin/RootVBox/LoginRoot" unique_id=575360538]
+[node name="UsernameInput" type="LineEdit" parent="Panel/Margin/RootVBox" unique_id=575360538]
 layout_mode = 2
 placeholder_text = "账号（email）"
 
-[node name="PasswordInput" type="LineEdit" parent="Panel/Margin/RootVBox/LoginRoot" unique_id=826536651]
+[node name="PasswordInput" type="LineEdit" parent="Panel/Margin/RootVBox" unique_id=826536651]
 layout_mode = 2
 placeholder_text = "密码"
 secret = true
 
-[node name="ButtonRow" type="HBoxContainer" parent="Panel/Margin/RootVBox/LoginRoot" unique_id=1560284597]
+[node name="ButtonRow" type="HBoxContainer" parent="Panel/Margin/RootVBox" unique_id=1560284597]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="LoginButton" type="Button" parent="Panel/Margin/RootVBox/LoginRoot/ButtonRow" unique_id=102210740]
+[node name="LoginButton" type="Button" parent="Panel/Margin/RootVBox/ButtonRow" unique_id=102210740]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "登录"
 
-[node name="RegisterButton" type="Button" parent="Panel/Margin/RootVBox/LoginRoot/ButtonRow" unique_id=407210565]
+[node name="RegisterButton" type="Button" parent="Panel/Margin/RootVBox/ButtonRow" unique_id=407210565]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "注册"
-
-[node name="ServerRoot" type="VBoxContainer" parent="Panel/Margin/RootVBox" unique_id=624798497]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="CurrentServerLabel" type="Label" parent="Panel/Margin/RootVBox/ServerRoot" unique_id=320434408]
-layout_mode = 2
-text = "当前服务器：-"
-autowrap_mode = 3
-
-[node name="ServerButtonRow" type="HBoxContainer" parent="Panel/Margin/RootVBox/ServerRoot" unique_id=460360509]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="OpenServerListButton" type="Button" parent="Panel/Margin/RootVBox/ServerRoot/ServerButtonRow" unique_id=1983054587]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "选择服务器"
-
-[node name="EnterGameButton" type="Button" parent="Panel/Margin/RootVBox/ServerRoot/ServerButtonRow" unique_id=269110614]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "进入游戏"
 
 [node name="StatusLabel" type="Label" parent="Panel/Margin/RootVBox" unique_id=1512307327]
 layout_mode = 2
 text = "状态：等待登录"
 autowrap_mode = 3
-
-[node name="ServerListPopup" type="PopupPanel" parent="." unique_id=1651628643]
-oversampling_override = 1.0
-size = Vector2i(420, 420)
-
-[node name="Margin" type="MarginContainer" parent="ServerListPopup" unique_id=962474603]
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 416.0
-offset_bottom = 416.0
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="VBox" type="VBoxContainer" parent="ServerListPopup/Margin" unique_id=1403363027]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="PopupTitle" type="Label" parent="ServerListPopup/Margin/VBox" unique_id=1969740355]
-layout_mode = 2
-text = "服务器列表"
-horizontal_alignment = 1
-
-[node name="ServerItemList" type="ItemList" parent="ServerListPopup/Margin/VBox" unique_id=1327369658]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PopupButtonRow" type="HBoxContainer" parent="ServerListPopup/Margin/VBox" unique_id=62137362]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="ConfirmButton" type="Button" parent="ServerListPopup/Margin/VBox/PopupButtonRow" unique_id=697729900]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "确认"
-
-[node name="CancelButton" type="Button" parent="ServerListPopup/Margin/VBox/PopupButtonRow" unique_id=365530912]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "取消"

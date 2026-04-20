@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://cd27152apo4vs"]
 
-[ext_resource type="Script" uid="uid://byrjad1dwe8gq" path="res://src/modules/backpack/view/HomeBackpackTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" path="res://src/modules/backpack/view/HomeBackpackTabContent.gd" id="1_4nqyr"]
 [ext_resource type="Script" uid="uid://bqyt7ni5vm1jw" path="res://script/ui/super-scroll-view/LoopGridView.gd" id="2_a7n2c"]
 [ext_resource type="PackedScene" path="res://src/modules/backpack/view/BackpackGridDemoItem.tscn" id="3_h8k5m"]
 
-[node name="HomeBackpackTab" type="Control" unique_id=440967189]
+[node name="HomeBackpackTabContent" type="Control" unique_id=440967189]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

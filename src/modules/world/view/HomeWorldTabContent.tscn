@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://src/modules/world/view/HomeWorldTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" path="res://src/modules/world/view/HomeWorldTabContent.gd" id="1_4nqyr"]
 
-[node name="HomeWorldTab" type="Control"]
+[node name="HomeWorldTabContent" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

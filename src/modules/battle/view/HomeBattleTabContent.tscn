@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://ov4k2vswos1c"]
 
-[ext_resource type="Script" uid="uid://cn3dwwvh67gyo" path="res://src/modules/battle/view/HomeBattleTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" path="res://src/modules/battle/view/HomeBattleTabContent.gd" id="1_4nqyr"]
 [ext_resource type="Script" uid="uid://h3mvkdi184ox" path="res://script/ui/super-scroll-view/LoopListView.gd" id="2_0v76c"]
 [ext_resource type="PackedScene" uid="uid://8woyn8g4qtko" path="res://src/modules/battle/view/ChatMessageItem.tscn" id="3_v2qsk"]
 [ext_resource type="PackedScene" path="res://src/modules/battle/view/TopIndexItem.tscn" id="4_f3d2p"]
 
-[node name="HomeBattleTab" type="Control" unique_id=2005192118]
+[node name="HomeBattleTabContent" type="Control" unique_id=2005192118]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
