@@ -1,20 +1,23 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://ov4k2vswos1c"]
 
-[ext_resource type="Script" path="res://src/modules/battle/view/HomeBattleTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" uid="uid://cn3dwwvh67gyo" path="res://src/modules/battle/view/HomeBattleTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" uid="uid://h3mvkdi184ox" path="res://script/ui/super-scroll-view/LoopListView.gd" id="2_0v76c"]
+[ext_resource type="PackedScene" uid="uid://8woyn8g4qtko" path="res://src/modules/battle/view/ChatMessageItem.tscn" id="3_v2qsk"]
+[ext_resource type="PackedScene" path="res://src/modules/battle/view/TopIndexItem.tscn" id="4_f3d2p"]
 
-[node name="HomeBattleTab" type="Control"]
+[node name="HomeBattleTab" type="Control" unique_id=2005192118]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_4nqyr")
 module_title = "战斗"
 
-[node name="Content" type="PanelContainer" parent="."]
+[node name="Content" type="PanelContainer" parent="." unique_id=1566718460]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,15 +25,61 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="Content"]
+[node name="VBox" type="VBoxContainer" parent="Content" unique_id=1014585002]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="Content/VBox"]
+[node name="Title" type="Label" parent="Content/VBox" unique_id=1358558401]
 layout_mode = 2
-text = "战斗"
 theme_override_font_sizes/font_size = 28
+text = "战斗"
 
-[node name="Desc" type="Label" parent="Content/VBox"]
+[node name="Desc" type="Label" parent="Content/VBox" unique_id=1512412858]
 layout_mode = 2
 text = "当前页签：战斗"
+
+[node name="ChatCenter" type="CenterContainer" parent="Content" unique_id=2103984782]
+layout_mode = 2
+
+[node name="ChatArea" type="PanelContainer" parent="Content/ChatCenter" unique_id=1145097288]
+custom_minimum_size = Vector2(560, 760)
+layout_mode = 2
+
+[node name="ChatVBox" type="VBoxContainer" parent="Content/ChatCenter/ChatArea" unique_id=2068296881]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="ChatTitle" type="Label" parent="Content/ChatCenter/ChatArea/ChatVBox" unique_id=1604802534]
+layout_mode = 2
+text = "世界聊天（下到上）"
+horizontal_alignment = 1
+
+[node name="TopIndexList" type="ScrollContainer" parent="Content/ChatCenter/ChatArea/ChatVBox" unique_id=1870534546]
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+vertical_scroll_mode = 0
+script = ExtResource("2_0v76c")
+arrange_type = 3
+item_padding = 8.0
+distance_for_new0 = 120.0
+distance_for_new1 = 120.0
+item_scene = ExtResource("4_f3d2p")
+
+[node name="Content" type="Control" parent="Content/ChatCenter/ChatArea/ChatVBox/TopIndexList" unique_id=746321615]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ChatListView" type="ScrollContainer" parent="Content/ChatCenter/ChatArea/ChatVBox" unique_id=460299312]
+custom_minimum_size = Vector2(0, 560)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_0v76c")
+support_variable_size = true
+item_padding = 18.0
+distance_for_new0 = 120.0
+distance_for_new1 = 120.0
+item_scene = ExtResource("3_v2qsk")
+
+[node name="Content" type="Control" parent="Content/ChatCenter/ChatArea/ChatVBox/ChatListView" unique_id=1979749844]
+layout_mode = 2
+size_flags_horizontal = 3

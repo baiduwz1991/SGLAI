@@ -6,7 +6,7 @@
 ## TL;DR（先看这里）
 
 - GDScript 业务代码只进 `src/`
-- GDScript 网络底层只进 `script/network/`
+- GDScript 通用脚本只进 `script/`
 - 第三方插件只进 `addons/`
 - 运行时资源（字体/图片等）统一放 `assets/`
 - 当前项目文档只进 `doc/`

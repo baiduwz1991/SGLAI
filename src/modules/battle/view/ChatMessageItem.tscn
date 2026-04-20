@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://8woyn8g4qtko"]
+
+[ext_resource type="Script" uid="uid://qumpuvgo7qv8" path="res://src/modules/battle/view/ChatMessageItem.gd" id="1_d4k2q"]
+
+[node name="ChatMessageItem" type="Control" unique_id=231880006]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("1_d4k2q")
+
+[node name="Bubble" type="PanelContainer" parent="." unique_id=395319367]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Bubble" unique_id=240942625]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Text" type="Label" parent="Bubble/Margin" unique_id=882532842]
+layout_mode = 2
+text = "[00:00] 玩家01：虚构消息[00:00] [00:00] 玩家01：虚构消息[00:00] [00:00] 玩家01：虚构消息[00:00] "
+autowrap_mode = 1

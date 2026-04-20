@@ -4,8 +4,10 @@ extends BaseUI
 signal server_selected(server_data: Dictionary)
 
 var _servers: Array[Dictionary] = []
+var _selected_index: int = -1
+var _item_payloads: Array[Dictionary] = []
 
-@onready var _item_list: ItemList = get_node_or_null("Panel/Margin/VBox/ServerItemList")
+@onready var _server_list_view: ScrollContainer = get_node_or_null("Panel/Margin/VBox/ServerListView")
 @onready var _confirm_button: Button = get_node_or_null("Panel/Margin/VBox/PopupButtonRow/ConfirmButton")
 @onready var _cancel_button: Button = get_node_or_null("Panel/Margin/VBox/PopupButtonRow/CancelButton")
 @onready var _hint_label: Label = get_node_or_null("Panel/Margin/VBox/HintLabel")
@@ -17,8 +19,14 @@ func on_ui_create(_params: Dictionary) -> void:
 		_confirm_button.pressed.connect(_on_confirm_pressed)
 	if _cancel_button != null:
 		_cancel_button.pressed.connect(_on_cancel_pressed)
-	if _item_list != null:
-		_item_list.item_activated.connect(_on_item_activated)
+	if _server_list_view != null and _server_list_view.has_signal("item_bound"):
+		if not _server_list_view.is_connected("item_bound", Callable(self, "_on_item_bound")):
+			_server_list_view.connect("item_bound", Callable(self, "_on_item_bound"))
+	if _server_list_view != null and _server_list_view.has_signal("item_recycled"):
+		if not _server_list_view.is_connected("item_recycled", Callable(self, "_on_item_recycled")):
+			_server_list_view.connect("item_recycled", Callable(self, "_on_item_recycled"))
+	if _server_list_view != null and _server_list_view.has_method("init_list_view"):
+		_server_list_view.call("init_list_view", 0)
 
 
 func on_ui_open(params: Dictionary) -> void:
@@ -30,46 +38,87 @@ func on_ui_open(params: Dictionary) -> void:
 
 #region 交互
 func _on_confirm_pressed() -> void:
-	if _item_list == null:
+	if _server_list_view == null:
 		_close_self()
 		return
-	var selected_indexes: PackedInt32Array = _item_list.get_selected_items()
-	if selected_indexes.is_empty():
+	if _selected_index < 0 or _selected_index >= _servers.size():
 		_set_hint_text("请先选择一个服务器。")
 		return
-	_emit_selected(selected_indexes[0])
+	_emit_selected(_selected_index)
 
 
 func _on_cancel_pressed() -> void:
 	_close_self()
 
 
-func _on_item_activated(index: int) -> void:
-	_emit_selected(index)
+func _refresh_item_list(current_server: Dictionary) -> void:
+	if _server_list_view == null:
+		return
+
+	if _servers.is_empty():
+		_selected_index = -1
+		_item_payloads.clear()
+		if _server_list_view.has_method("set_count_and_refresh"):
+			_server_list_view.call("set_count_and_refresh", 0, true)
+		_set_hint_text("暂无可选服务器。")
+		return
+
+	_selected_index = _find_server_index_by_id(str(current_server.get("server_id", "")))
+	if _selected_index < 0:
+		_selected_index = 0
+	_item_payloads = _build_item_payloads()
+	if _server_list_view.has_method("set_count_and_refresh"):
+		_server_list_view.call("set_count_and_refresh", _item_payloads.size(), true)
+	if _server_list_view.has_method("refresh_all_shown_item"):
+		_server_list_view.call("refresh_all_shown_item")
+	_set_hint_text("请选择服务器。")
+
+
+func _on_item_bound(index: int, item: Node) -> void:
+	if item == null:
+		return
+	if index < 0 or index >= _item_payloads.size():
+		return
+	if item.has_method("bind_server_data"):
+		var payload: Dictionary = _item_payloads[index]
+		item.call("bind_server_data", index, payload.get("server", {}), bool(payload.get("selected", false)))
+	if item.has_signal("clicked"):
+		if not item.is_connected("clicked", Callable(self, "_on_server_item_clicked")):
+			item.connect("clicked", Callable(self, "_on_server_item_clicked"))
+
+
+func _on_item_recycled(item: Node) -> void:
+	if item == null:
+		return
+	if item.has_method("reset_item_state"):
+		item.call("reset_item_state")
+
+
+func _on_server_item_clicked(index: int) -> void:
+	if index < 0 or index >= _servers.size():
+		return
+	_selected_index = index
+	_item_payloads = _build_item_payloads()
+	if _server_list_view != null and _server_list_view.has_method("refresh_all_shown_item"):
+		_server_list_view.call("refresh_all_shown_item")
+
+
+func _build_item_payloads() -> Array[Dictionary]:
+	var payloads: Array[Dictionary] = []
+	var index: int = 0
+	while index < _servers.size():
+		payloads.append({
+			"server": _servers[index],
+			"selected": index == _selected_index
+		})
+		index += 1
+	return payloads
+
+
 #endregion
 
 
 #region 内部逻辑
-func _refresh_item_list(current_server: Dictionary) -> void:
-	if _item_list == null:
-		return
-	_item_list.clear()
-	for server in _servers:
-		var server_name: String = str(server.get("server_name", "未命名服务器"))
-		var server_id: String = str(server.get("server_id", ""))
-		_item_list.add_item("%s (%s)" % [server_name, server_id])
-
-	if _servers.is_empty():
-		_set_hint_text("暂无可选服务器。")
-		return
-
-	var selected_index: int = _find_server_index_by_id(str(current_server.get("server_id", "")))
-	if selected_index < 0:
-		selected_index = 0
-	_item_list.select(selected_index)
-	_set_hint_text("请选择服务器。")
-
-
 func _find_server_index_by_id(server_id: String) -> int:
 	if server_id.is_empty():
 		return -1

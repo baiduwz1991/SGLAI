@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://u52n0ucwustf"]
 
 [ext_resource type="Script" uid="uid://cs1joxyum173c" path="res://src/modules/login/view/ServerListPopup.gd" id="1_s5m7p"]
+[ext_resource type="Script" uid="uid://h3mvkdi184ox" path="res://script/ui/super-scroll-view/LoopListView.gd" id="2_6kthf"]
+[ext_resource type="PackedScene" uid="uid://dgggypmeyj6ab" path="res://src/modules/login/view/ServerListItem.tscn" id="3_o1x3h"]
 
 [node name="ServerListPopup" type="Control" unique_id=1634665335]
 layout_mode = 3
@@ -53,9 +55,22 @@ layout_mode = 2
 text = "服务器列表"
 horizontal_alignment = 1
 
-[node name="ServerItemList" type="ItemList" parent="Panel/Margin/VBox" unique_id=1860665445]
+[node name="ServerListView" type="ScrollContainer" parent="Panel/Margin/VBox" unique_id=1860665445]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
+script = ExtResource("2_6kthf")
+item_padding = 6.0
+distance_for_recycle0 = 200.0
+distance_for_new0 = 120.0
+distance_for_recycle1 = 200.0
+distance_for_new1 = 120.0
+item_scene = ExtResource("3_o1x3h")
+
+[node name="Content" type="Control" parent="Panel/Margin/VBox/ServerListView" unique_id=1826684666]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="HintLabel" type="Label" parent="Panel/Margin/VBox" unique_id=454218236]
 layout_mode = 2
