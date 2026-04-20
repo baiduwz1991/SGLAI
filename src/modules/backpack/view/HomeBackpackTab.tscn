@@ -1,20 +1,22 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://cd27152apo4vs"]
 
-[ext_resource type="Script" path="res://src/modules/backpack/view/HomeBackpackTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" uid="uid://byrjad1dwe8gq" path="res://src/modules/backpack/view/HomeBackpackTab.gd" id="1_4nqyr"]
+[ext_resource type="Script" uid="uid://bqyt7ni5vm1jw" path="res://script/ui/super-scroll-view/LoopGridView.gd" id="2_a7n2c"]
+[ext_resource type="PackedScene" path="res://src/modules/backpack/view/BackpackGridDemoItem.tscn" id="3_h8k5m"]
 
-[node name="HomeBackpackTab" type="Control"]
+[node name="HomeBackpackTab" type="Control" unique_id=440967189]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_4nqyr")
 module_title = "背包"
 
-[node name="Content" type="PanelContainer" parent="."]
+[node name="Content" type="PanelContainer" parent="." unique_id=832172316]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,15 +24,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="Content"]
+[node name="CenterContainer" type="CenterContainer" parent="Content" unique_id=1690621755]
+layout_mode = 2
+
+[node name="BackpackArea" type="PanelContainer" parent="Content/CenterContainer" unique_id=768213924]
+custom_minimum_size = Vector2(680, 800)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Content/CenterContainer/BackpackArea" unique_id=1154290122]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="Content/VBox"]
+[node name="Title" type="Label" parent="Content/CenterContainer/BackpackArea/VBox" unique_id=1175890839]
 layout_mode = 2
-text = "背包"
 theme_override_font_sizes/font_size = 28
+text = "背包"
 
-[node name="Desc" type="Label" parent="Content/VBox"]
+[node name="Desc" type="Label" parent="Content/CenterContainer/BackpackArea/VBox" unique_id=917307186]
 layout_mode = 2
 text = "当前页签：背包"
+
+[node name="GridArea" type="PanelContainer" parent="Content/CenterContainer/BackpackArea/VBox" unique_id=1115620613]
+custom_minimum_size = Vector2(0, 700)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridView" type="ScrollContainer" parent="Content/CenterContainer/BackpackArea/VBox/GridArea" unique_id=1644919481]
+layout_mode = 2
+script = ExtResource("2_a7n2c")
+cell_size = Vector2(170, 160)
+fixed_cross_count = 4
+distance_for_new0 = 120.0
+distance_for_new1 = 120.0
+item_scene = ExtResource("3_h8k5m")
+auto_anchor_tail_on_reset = false
+
+[node name="Content" type="Control" parent="Content/CenterContainer/BackpackArea/VBox/GridArea/GridView" unique_id=1376692937]
+layout_mode = 2
