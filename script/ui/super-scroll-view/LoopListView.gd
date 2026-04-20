@@ -18,6 +18,8 @@ var arrange_type: int = TypesScript.ListItemArrangeType.TOP_TO_BOTTOM
 @export var hide_scroll_bars: bool = true
 @export var item_scene: PackedScene
 @export var content_path: NodePath = ^"Content"
+@export var auto_anchor_tail_on_reset: bool = true
+@export var auto_anchor_frames: int = 8
 
 var is_vert_list: bool = true
 
@@ -37,6 +39,10 @@ var _dragging: bool = false
 var _drag_pointer_id: int = -1
 var _drag_last_pos: Vector2 = Vector2.ZERO
 var _drag_accum_distance: float = 0.0
+var _needs_refresh: bool = true
+var _last_refresh_offset: float = -1.0
+var _last_viewport_size: float = -1.0
+var _pending_auto_anchor_frames: int = 0
 
 
 func _ready() -> void:
@@ -48,7 +54,16 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if _list_view_inited:
+	if not _list_view_inited:
+		return
+	if _pending_auto_anchor_frames > 0 and not _dragging:
+		_apply_reset_anchor()
+		_pending_auto_anchor_frames -= 1
+	var curr_offset: float = _get_content_offset()
+	var curr_viewport_size: float = _get_view_port_size()
+	if _needs_refresh \
+		or not is_equal_approx(curr_offset, _last_refresh_offset) \
+		or not is_equal_approx(curr_viewport_size, _last_viewport_size):
 		_refresh_window()
 
 
@@ -105,6 +120,7 @@ func set_count_and_refresh(item_count: int, reset_pos: bool = true) -> void:
 func reset_list_view(reset_pos: bool = true) -> void:
 	if reset_pos:
 		_set_content_offset(0.0)
+	_mark_refresh_dirty()
 	_refresh_window()
 
 
@@ -118,6 +134,7 @@ func refresh_all_shown_item() -> void:
 		if support_variable_size and is_vert_list:
 			_update_extent_for_item(index, item)
 	_rebuild_layout_cache()
+	_mark_refresh_dirty()
 	_refresh_window()
 
 
@@ -134,36 +151,45 @@ func on_item_size_changed(item_index: int) -> void:
 		_rebuild_layout_cache()
 		if keep_bottom_anchor:
 			scroll_to_list_end()
+		_mark_refresh_dirty()
 		_refresh_window()
 
 
 func move_panel_to_item_index(item_index: int, offset: float) -> void:
 	if _item_total_count <= 0:
 		return
+	_pending_auto_anchor_frames = 0
 	var clamped_index: int = clampi(item_index, 0, _item_total_count - 1)
 	var target: float = _get_item_start(clamped_index)
 	if _is_reverse_arrange():
 		target = target - (_get_view_port_size() - _get_item_extent(clamped_index))
 	_set_content_offset(target + offset)
+	_mark_refresh_dirty()
 	_refresh_window()
 
 
 func move_panel_by_offset(offset: float) -> void:
+	_pending_auto_anchor_frames = 0
 	_set_content_offset(_get_content_offset() + offset)
+	_mark_refresh_dirty()
 	_refresh_window()
 
 
 func scroll_to_list_end() -> void:
+	_pending_auto_anchor_frames = 0
 	if _item_total_count <= 0:
 		_set_content_offset(0.0)
+		_mark_refresh_dirty()
 		return
 	if _is_reverse_arrange():
 		var target: float = _get_item_start(0) - (_get_view_port_size() - _get_item_extent(0))
 		_set_content_offset(target)
+		_mark_refresh_dirty()
 		_refresh_window()
 		return
 	var max_offset: float = maxf(0.0, _content_total_size - _get_view_port_size())
 	_set_content_offset(max_offset)
+	_mark_refresh_dirty()
 	_refresh_window()
 
 
@@ -190,6 +216,8 @@ func _set_item_count(count: int, reset_pos: bool) -> void:
 		_content_total_size = 0.0
 		_update_content_size()
 		_set_content_offset(0.0)
+		_pending_auto_anchor_frames = 0
+		_mark_refresh_dirty()
 		return
 	_item_extent_cache.resize(_item_total_count)
 	var i: int = 0
@@ -199,7 +227,15 @@ func _set_item_count(count: int, reset_pos: bool) -> void:
 		i += 1
 	_rebuild_layout_cache()
 	if reset_pos:
-		_set_content_offset(0.0)
+		if _is_reverse_arrange() and auto_anchor_tail_on_reset:
+			_pending_auto_anchor_frames = maxi(1, auto_anchor_frames)
+			_apply_reset_anchor()
+		else:
+			_pending_auto_anchor_frames = 0
+			_set_content_offset(0.0)
+	else:
+		_pending_auto_anchor_frames = 0
+	_mark_refresh_dirty()
 	_refresh_window()
 
 
@@ -241,6 +277,9 @@ func _apply_scroll_bar_visibility() -> void:
 
 func _refresh_window() -> void:
 	if _content == null or _item_total_count <= 0:
+		_last_refresh_offset = _get_content_offset()
+		_last_viewport_size = _get_view_port_size()
+		_needs_refresh = false
 		return
 
 	var offset: float = _get_content_offset()
@@ -249,13 +288,13 @@ func _refresh_window() -> void:
 	var layout_changed: bool = false
 
 	var needed: Dictionary = {}
-	var idx: int = 0
-	while idx < _item_total_count:
-		var start_pos: float = _get_item_start(idx)
-		var end_pos: float = start_pos + _get_item_extent(idx)
-		if end_pos >= window_start and start_pos <= window_end:
-			needed[idx] = true
-		idx += 1
+	var begin_order: int = _find_first_order_by_end(window_start)
+	var end_order: int = _find_first_order_by_start_gt(window_end)
+	var order: int = begin_order
+	while order < end_order:
+		var idx: int = _ordered_index_to_item_index(order)
+		needed[idx] = true
+		order += 1
 
 	var to_recycle: Array[int] = []
 	for key in _active_items.keys():
@@ -299,6 +338,50 @@ func _refresh_window() -> void:
 		var item: Control = _active_items.get(i, null)
 		if item != null:
 			_set_item_position(i, item)
+
+	_last_refresh_offset = offset
+	_last_viewport_size = _get_view_port_size()
+	_needs_refresh = false
+
+
+func _ordered_index_to_item_index(order_index: int) -> int:
+	if not _is_reverse_arrange():
+		return order_index
+	return (_item_total_count - 1) - order_index
+
+
+func _get_order_start(order_index: int) -> float:
+	var item_index: int = _ordered_index_to_item_index(order_index)
+	return _get_item_start(item_index)
+
+
+func _get_order_end(order_index: int) -> float:
+	var item_index: int = _ordered_index_to_item_index(order_index)
+	return _get_item_start(item_index) + _get_item_extent(item_index)
+
+
+func _find_first_order_by_end(window_start: float) -> int:
+	var left: int = 0
+	var right: int = _item_total_count
+	while left < right:
+		var mid: int = int((left + right) / 2)
+		if _get_order_end(mid) >= window_start:
+			right = mid
+		else:
+			left = mid + 1
+	return left
+
+
+func _find_first_order_by_start_gt(window_end: float) -> int:
+	var left: int = 0
+	var right: int = _item_total_count
+	while left < right:
+		var mid: int = int((left + right) / 2)
+		if _get_order_start(mid) > window_end:
+			right = mid
+		else:
+			left = mid + 1
+	return left
 
 
 func _set_item_position(item_index: int, item: Control) -> void:
@@ -442,10 +525,13 @@ func _get_content_offset() -> float:
 func _set_content_offset(offset: float) -> void:
 	var max_offset: float = maxf(0.0, _content_total_size - _get_view_port_size())
 	var clamped: float = clampf(offset, 0.0, max_offset)
+	var old_offset: float = _get_content_offset()
 	if is_vert_list:
 		scroll_vertical = int(clamped)
 	else:
 		scroll_horizontal = int(clamped)
+	if not is_equal_approx(old_offset, clamped):
+		_mark_refresh_dirty()
 
 
 func _get_view_port_size() -> float:
@@ -457,6 +543,7 @@ func _is_reverse_arrange() -> bool:
 
 
 func _start_drag(pointer_id: int, global_pos: Vector2) -> void:
+	_pending_auto_anchor_frames = 0
 	_dragging = true
 	_drag_pointer_id = pointer_id
 	_drag_last_pos = global_pos
@@ -480,3 +567,18 @@ func _apply_drag_delta(delta: Vector2) -> void:
 
 func _is_point_inside_view(global_pos: Vector2) -> bool:
 	return get_global_rect().has_point(global_pos)
+
+
+func _mark_refresh_dirty() -> void:
+	_needs_refresh = true
+
+
+func _apply_reset_anchor() -> void:
+	if _item_total_count <= 0:
+		_set_content_offset(0.0)
+		return
+	if _is_reverse_arrange() and auto_anchor_tail_on_reset:
+		var target: float = _get_item_start(0) - (_get_view_port_size() - _get_item_extent(0))
+		_set_content_offset(target)
+	else:
+		_set_content_offset(0.0)

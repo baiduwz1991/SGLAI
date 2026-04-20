@@ -2,7 +2,6 @@ class_name HomeBattleTab
 extends HomeModuleTabBase
 
 var _chat_messages: Array[Dictionary] = []
-var _pending_bottom_align_pass: int = 0
 
 @onready var _chat_list_view: ScrollContainer = get_node_or_null("Content/ChatCenter/ChatArea/ChatVBox/ChatListView")
 @onready var _top_index_list_view: ScrollContainer = get_node_or_null("Content/ChatCenter/ChatArea/ChatVBox/TopIndexList")
@@ -46,9 +45,6 @@ func _on_battle_open(_params: Dictionary) -> void:
 		_chat_list_view.call("set_count_and_refresh", _chat_messages.size(), true)
 	if _chat_list_view.has_method("refresh_all_shown_item"):
 		_chat_list_view.call("refresh_all_shown_item")
-	if not _chat_messages.is_empty():
-		_pending_bottom_align_pass = 12
-		call_deferred("_stabilize_chat_bottom_align")
 
 
 func _on_chat_item_bound(index: int, item_node: Node) -> void:
@@ -65,20 +61,6 @@ func _on_top_index_item_bound(index: int, item_node: Node) -> void:
 		return
 	if item_node.has_method("bind_index"):
 		item_node.call("bind_index", index)
-
-
-func _stabilize_chat_bottom_align() -> void:
-	if _chat_list_view == null:
-		return
-	if _chat_list_view.has_method("refresh_all_shown_item"):
-		_chat_list_view.call("refresh_all_shown_item")
-	if _chat_list_view.has_method("move_panel_to_item_index"):
-		_chat_list_view.call("move_panel_to_item_index", 0, 0.0)
-	elif _chat_list_view.has_method("scroll_to_list_end"):
-		_chat_list_view.call("scroll_to_list_end")
-	_pending_bottom_align_pass -= 1
-	if _pending_bottom_align_pass > 0:
-		call_deferred("_stabilize_chat_bottom_align")
 
 
 func _build_mock_chat_messages() -> Array[Dictionary]:
