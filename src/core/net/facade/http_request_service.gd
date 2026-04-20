@@ -15,6 +15,7 @@ const ACCOUNT_TYPE_SAVE_HISTORY: String = "eSaveHistory"
 const ACCOUNT_TYPE_GET_NOTICE_LIST: String = "eGetNoticeList"
 const ACCOUNT_TYPE_GET_PRIVACY_EXISTS: String = "eGetUserAppIdPrivacyPolicyExist"
 const ACCOUNT_TYPE_SAVE_PRIVACY: String = "eSaveUserAppIdPrivacyPolicy"
+const REQUEST_TIMEOUT_SECONDS: float = 15.0
 
 var _http_manager: Object
 var _next_request_id: int = 0
@@ -27,6 +28,35 @@ func _ready() -> void:
 		_http_manager = tree.root.get_node_or_null("HttpManager")
 	if _http_manager != null and _http_manager.has_signal("RequestCompleted"):
 		_http_manager.connect("RequestCompleted", Callable(self, "_on_request_completed"))
+	set_process(false)
+
+
+func _process(delta: float) -> void:
+	if _pending_callbacks.is_empty():
+		set_process(false)
+		return
+
+	var timeout_ids: Array[int] = []
+	for request_id_variant in _pending_callbacks.keys():
+		var request_id: int = int(request_id_variant)
+		var context: Dictionary = _pending_callbacks.get(request_id, {})
+		var elapsed: float = float(context.get("elapsed", 0.0)) + delta
+		context["elapsed"] = elapsed
+		_pending_callbacks[request_id] = context
+		if elapsed >= REQUEST_TIMEOUT_SECONDS:
+			timeout_ids.append(request_id)
+
+	for timeout_request_id in timeout_ids:
+		if not _pending_callbacks.has(timeout_request_id):
+			continue
+		var timeout_context: Dictionary = _pending_callbacks[timeout_request_id]
+		_pending_callbacks.erase(timeout_request_id)
+		var timeout_callback: Callable = timeout_context.get("callback", Callable())
+		var timeout_module_name: String = str(timeout_context.get("module_name", ""))
+		_fail_callback(timeout_callback, "request_timeout", timeout_module_name)
+
+	if _pending_callbacks.is_empty():
+		set_process(false)
 
 
 func request(params: Dictionary) -> void:
@@ -79,8 +109,10 @@ func request(params: Dictionary) -> void:
 		var request_id: int = _next_request_id
 		_pending_callbacks[request_id] = {
 			"callback": callback,
-			"module_name": module_name
+			"module_name": module_name,
+			"elapsed": 0.0
 		}
+		set_process(true)
 		_http_manager.call(
 			"RequestAsyncById",
 			request_id,
@@ -120,6 +152,8 @@ func _on_request_completed(request_id: int, result: Dictionary) -> void:
 
 	var context: Dictionary = _pending_callbacks[request_id]
 	_pending_callbacks.erase(request_id)
+	if _pending_callbacks.is_empty():
+		set_process(false)
 	var callback: Callable = context.get("callback", Callable())
 	var module_name: String = str(context.get("module_name", ""))
 

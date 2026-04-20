@@ -134,6 +134,7 @@ func _process(_delta: float) -> void:
 func _start_phase(method_name: StringName, back: Callable) -> void:
 	if _current_phase_method != StringName():
 		push_warning("ControllerManager 当前已有流程执行中：%s" % String(_current_phase_method))
+		_call_back(back)
 		return
 
 	if _controllers.is_empty():

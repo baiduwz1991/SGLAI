@@ -72,13 +72,11 @@ func clear_call_back_map() -> void:
 
 
 func add_push_by_command(command: StringName, handler: Callable) -> void:
-	_facade.add_push_by_command(command, handler)
 	if MessageManager != null:
 		MessageManager.add_push_by_command(command, handler)
 
 
 func remove_push_by_command(command: StringName, handler: Callable) -> void:
-	_facade.remove_push_by_command(command, handler)
 	if MessageManager != null:
 		MessageManager.remove_push_by_command(command, handler)
 
