@@ -1,3 +1,13 @@
+---
+description: BaseUI 生命周期定义、时序和页面切换约束
+globs: src/modules/**/view/*.gd
+alwaysApply: false
+owner: client-ui
+status: active
+last_updated: 2026-04-20
+version: 1.2.0
+---
+
 # UI 生命周期规范（落地版）
 
 ## 页面模式
@@ -8,7 +18,7 @@
 ## BaseUI 业务生命周期
 - `on_ui_create(params)`：实例创建后仅一次（由框架在首次打开时直接调度）。
 - `on_ui_open(params)`：每次打开时调用。
-- `on_ui_show()`：页面进入可见可交互状态。
+- `on_ui_show()`：页面进入可见可交互状态（仅在不可见 -> 可见时触发）。
 - `on_ui_hide()`：页面离开可见状态。
 - `on_ui_close()`：页面关闭阶段。
 - `on_ui_destroy()`：页面销毁前最终清理。
@@ -16,6 +26,15 @@
 ## BaseUI 子类书写约定
 - 所有 `BaseUI` 子类实现生命周期函数时，统一使用 `#region 生命周期` / `#endregion` 区块包裹。
 - 推荐顺序保持与 `BaseUI` 一致：`on_ui_create -> on_ui_open -> on_ui_show -> on_ui_hide -> on_ui_close -> on_ui_destroy`。
+
+## 生命周期时序表
+
+| 场景 | on_ui_create | on_ui_open | on_ui_show | on_ui_hide | 备注 |
+|---|---|---|---|---|---|
+| 首次打开页面 | 1 次 | 1 次 | 1 次 | 0 次 | 典型首开流程 |
+| 页面已显示时再次 open（reopen） | 0 次 | 1 次 | 0 次 | 0 次 | 只刷新 open，不重复 show |
+| hide 后再次显示 | 0 次 | 0 次 | 1 次 | 先前已触发 | 显示恢复场景 |
+| close 后重新创建打开 | 1 次 | 1 次 | 1 次 | 0 次 | 新实例，完整首开流程 |
 
 ## 约束
 - 业务侧不直接 `change_scene_to_packed`、不直接跨模块 `add_child` 打开页面。
@@ -26,14 +45,6 @@
 - 设置 `root_ui_id` 作为栈底根页面，`close_ui` 不允许弹出栈底根页面。
 - `attach` 以 `parent_ui_id + slot_id` 作为唯一键，同一 slot 只允许一个活跃页面。
 
-## 首批接入
-- 启动入口由 `UIBootstrap` 统一调用 `UIManager.open_ui(UIRegistry.START_GAME_SCENE)`。
-- `StartGameScene` 通过 `UIManager.open_attach(ui_id, slot_id, UIRegistry.LOGIN_PANEL)` 以 `MODE_ATTACH` 打开登录页。
-- `LoginPanel` 通过 `UIManager.open_ui(UIRegistry.HOME_TEST_PANEL)` 切换到 homeTest。
-
-## 验证清单
-- 场景替换：启动后打开登录页，再切换到 homeTest，观察登录页进入隐藏状态并压入主栈。
-- 页面恢复：调用 `close_ui()` 后，当前主页面关闭且自动恢复上一页并输出恢复日志。
-- 覆盖层：调用 `UIManager.open_overlay()` 打开覆盖层，关闭后下层页面恢复显示。
-- attach 切换：同一 `parent_ui_id + slot_id` 连续切换 A/B 页面，确认 A 被销毁后再创建 B。
-- 父页关闭：关闭主页面时，关联 attach 页面执行 `hide -> close -> destroy` 且不残留。
+## 实施说明
+- 具体接入步骤、迁移顺序与验证清单属于执行流程，统一下沉到：
+  - `.cursor/skills/ui-view-task-routing/SKILL.md`

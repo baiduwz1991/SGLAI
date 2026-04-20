@@ -1,11 +1,15 @@
 class_name BackpackGridDemoItem
 extends "res://script/ui/super-scroll-view/LoopListViewItem.gd"
 
-@onready var _label: Label = get_node_or_null("Label")
+#region 节点引用
+@export var label_path: NodePath
+
+@onready var label: Label = get_node(label_path) as Label
+#endregion
 
 
+#region 绑定
 func bind_item_data(index: int, _data: Variant) -> void:
 	item_index = index
-	if _label == null:
-		return
-	_label.text = "%d" % (index + 1)
+	label.text = "%d" % (index + 1)
+#endregion

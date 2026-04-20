@@ -24,11 +24,21 @@ const TAB_LABELS: Dictionary[StringName, String] = {
 
 var _home_test_controller: HomeTestController = null
 var _active_tab: StringName = StringName()
-@onready var _content_slot: Control = get_node_or_null("ContentSlot")
-@onready var _backpack_tab_button: Button = get_node_or_null("TabBar/BackpackTabButton")
-@onready var _battle_tab_button: Button = get_node_or_null("TabBar/BattleTabButton")
-@onready var _world_tab_button: Button = get_node_or_null("TabBar/WorldTabButton")
-@onready var _general_tab_button: Button = get_node_or_null("TabBar/GeneralTabButton")
+#endregion
+
+
+#region 节点引用
+@export var content_slot_path: NodePath
+@export var backpack_tab_button_path: NodePath
+@export var battle_tab_button_path: NodePath
+@export var world_tab_button_path: NodePath
+@export var general_tab_button_path: NodePath
+
+@onready var content_slot: Control = get_node(content_slot_path) as Control
+@onready var backpack_tab_button: Button = get_node(backpack_tab_button_path) as Button
+@onready var battle_tab_button: Button = get_node(battle_tab_button_path) as Button
+@onready var world_tab_button: Button = get_node(world_tab_button_path) as Button
+@onready var general_tab_button: Button = get_node(general_tab_button_path) as Button
 #endregion
 
 #region 生命周期
@@ -45,14 +55,10 @@ func on_ui_create(_params: Dictionary) -> void:
 
 #region 交互与显示
 func _bind_tab_buttons() -> void:
-	if _backpack_tab_button != null:
-		_backpack_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_BACKPACK))
-	if _battle_tab_button != null:
-		_battle_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_BATTLE))
-	if _world_tab_button != null:
-		_world_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_WORLD))
-	if _general_tab_button != null:
-		_general_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_GENERAL))
+	backpack_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_BACKPACK))
+	battle_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_BATTLE))
+	world_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_WORLD))
+	general_tab_button.pressed.connect(_on_tab_pressed.bind(TAB_GENERAL))
 
 
 func _on_tab_pressed(tab_id: StringName) -> void:
@@ -61,9 +67,6 @@ func _on_tab_pressed(tab_id: StringName) -> void:
 
 func _select_tab(tab_id: StringName) -> void:
 	if _home_test_controller == null:
-		return
-	if _content_slot == null:
-		push_warning("[HomeTestPanel] ContentSlot 不存在，无法切换页签。")
 		return
 	if _active_tab == tab_id:
 		return

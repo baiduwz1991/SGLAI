@@ -12,6 +12,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8n7o1")
+content_slot_path = NodePath("ContentSlot")
+backpack_tab_button_path = NodePath("TabBar/BackpackTabButton")
+battle_tab_button_path = NodePath("TabBar/BattleTabButton")
+world_tab_button_path = NodePath("TabBar/WorldTabButton")
+general_tab_button_path = NodePath("TabBar/GeneralTabButton")
 
 [node name="ContentSlot" type="Control" parent="." unique_id=374282092]
 layout_mode = 1

@@ -7,26 +7,29 @@ var _servers: Array[Dictionary] = []
 var _selected_index: int = -1
 var _item_payloads: Array[Dictionary] = []
 
-@onready var _server_list_view: ScrollContainer = get_node_or_null("Panel/Margin/VBox/ServerListView")
-@onready var _confirm_button: Button = get_node_or_null("Panel/Margin/VBox/PopupButtonRow/ConfirmButton")
-@onready var _cancel_button: Button = get_node_or_null("Panel/Margin/VBox/PopupButtonRow/CancelButton")
-@onready var _hint_label: Label = get_node_or_null("Panel/Margin/VBox/HintLabel")
+@export var server_list_view_path: NodePath
+@export var confirm_button_path: NodePath
+@export var cancel_button_path: NodePath
+@export var hint_label_path: NodePath
+
+@onready var server_list_view: ScrollContainer = get_node(server_list_view_path) as ScrollContainer
+@onready var confirm_button: Button = get_node(confirm_button_path) as Button
+@onready var cancel_button: Button = get_node(cancel_button_path) as Button
+@onready var hint_label: Label = get_node(hint_label_path) as Label
 
 
 #region 生命周期
 func on_ui_create(_params: Dictionary) -> void:
-	if _confirm_button != null:
-		_confirm_button.pressed.connect(_on_confirm_pressed)
-	if _cancel_button != null:
-		_cancel_button.pressed.connect(_on_cancel_pressed)
-	if _server_list_view != null and _server_list_view.has_signal("item_bound"):
-		if not _server_list_view.is_connected("item_bound", Callable(self, "_on_item_bound")):
-			_server_list_view.connect("item_bound", Callable(self, "_on_item_bound"))
-	if _server_list_view != null and _server_list_view.has_signal("item_recycled"):
-		if not _server_list_view.is_connected("item_recycled", Callable(self, "_on_item_recycled")):
-			_server_list_view.connect("item_recycled", Callable(self, "_on_item_recycled"))
-	if _server_list_view != null and _server_list_view.has_method("init_list_view"):
-		_server_list_view.call("init_list_view", 0)
+	confirm_button.pressed.connect(_on_confirm_pressed)
+	cancel_button.pressed.connect(_on_cancel_pressed)
+	if server_list_view.has_signal("item_bound"):
+		if not server_list_view.is_connected("item_bound", Callable(self, "_on_item_bound")):
+			server_list_view.connect("item_bound", Callable(self, "_on_item_bound"))
+	if server_list_view.has_signal("item_recycled"):
+		if not server_list_view.is_connected("item_recycled", Callable(self, "_on_item_recycled")):
+			server_list_view.connect("item_recycled", Callable(self, "_on_item_recycled"))
+	if server_list_view.has_method("init_list_view"):
+		server_list_view.call("init_list_view", 0)
 
 
 func on_ui_open(params: Dictionary) -> void:
@@ -38,9 +41,6 @@ func on_ui_open(params: Dictionary) -> void:
 
 #region 交互
 func _on_confirm_pressed() -> void:
-	if _server_list_view == null:
-		_close_self()
-		return
 	if _selected_index < 0 or _selected_index >= _servers.size():
 		_set_hint_text("请先选择一个服务器。")
 		return
@@ -52,14 +52,11 @@ func _on_cancel_pressed() -> void:
 
 
 func _refresh_item_list(current_server: Dictionary) -> void:
-	if _server_list_view == null:
-		return
-
 	if _servers.is_empty():
 		_selected_index = -1
 		_item_payloads.clear()
-		if _server_list_view.has_method("set_count_and_refresh"):
-			_server_list_view.call("set_count_and_refresh", 0, true)
+		if server_list_view.has_method("set_count_and_refresh"):
+			server_list_view.call("set_count_and_refresh", 0, true)
 		_set_hint_text("暂无可选服务器。")
 		return
 
@@ -67,10 +64,10 @@ func _refresh_item_list(current_server: Dictionary) -> void:
 	if _selected_index < 0:
 		_selected_index = 0
 	_item_payloads = _build_item_payloads()
-	if _server_list_view.has_method("set_count_and_refresh"):
-		_server_list_view.call("set_count_and_refresh", _item_payloads.size(), true)
-	if _server_list_view.has_method("refresh_all_shown_item"):
-		_server_list_view.call("refresh_all_shown_item")
+	if server_list_view.has_method("set_count_and_refresh"):
+		server_list_view.call("set_count_and_refresh", _item_payloads.size(), true)
+	if server_list_view.has_method("refresh_all_shown_item"):
+		server_list_view.call("refresh_all_shown_item")
 	_set_hint_text("请选择服务器。")
 
 
@@ -99,8 +96,8 @@ func _on_server_item_clicked(index: int) -> void:
 		return
 	_selected_index = index
 	_item_payloads = _build_item_payloads()
-	if _server_list_view != null and _server_list_view.has_method("refresh_all_shown_item"):
-		_server_list_view.call("refresh_all_shown_item")
+	if server_list_view.has_method("refresh_all_shown_item"):
+		server_list_view.call("refresh_all_shown_item")
 
 
 func _build_item_payloads() -> Array[Dictionary]:
@@ -140,8 +137,7 @@ func _emit_selected(index: int) -> void:
 
 
 func _set_hint_text(text: String) -> void:
-	if _hint_label != null:
-		_hint_label.text = text
+	hint_label.text = text
 
 
 func _close_self() -> void:

@@ -2,6 +2,10 @@
 name: 性能基准师
 description: 专注系统性能测试和容量规划的性能工程专家，用数据找到性能瓶颈，用基准测试证明优化效果。
 color: lime
+owner: testing
+status: active
+last_updated: 2026-04-20
+version: 1.1.0
 ---
 
 # 性能基准师

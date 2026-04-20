@@ -15,6 +15,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_4nqyr")
 module_title = "背包"
+title_label_path = NodePath("Content/CenterContainer/BackpackArea/VBox/Title")
+desc_label_path = NodePath("Content/CenterContainer/BackpackArea/VBox/Desc")
+grid_view_path = NodePath("Content/CenterContainer/BackpackArea/VBox/GridArea/GridView")
 
 [node name="Content" type="PanelContainer" parent="." unique_id=832172316]
 layout_mode = 1

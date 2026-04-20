@@ -1,12 +1,20 @@
 class_name HomeBattleTab
 extends HomeModuleTabBase
 
+#region 状态
 var _chat_messages: Array[Dictionary] = []
+#endregion
 
-@onready var _chat_list_view: ScrollContainer = get_node_or_null("Content/ChatCenter/ChatArea/ChatVBox/ChatListView")
-@onready var _top_index_list_view: ScrollContainer = get_node_or_null("Content/ChatCenter/ChatArea/ChatVBox/TopIndexList")
+#region 节点引用
+@export var chat_list_view_path: NodePath
+@export var top_index_list_view_path: NodePath
+
+@onready var chat_list_view: ScrollContainer = get_node(chat_list_view_path) as ScrollContainer
+@onready var top_index_list_view: ScrollContainer = get_node(top_index_list_view_path) as ScrollContainer
+#endregion
 
 
+#region 生命周期
 func on_ui_create(params: Dictionary) -> void:
 	super.on_ui_create(params)
 	_on_battle_create(params)
@@ -15,36 +23,35 @@ func on_ui_create(params: Dictionary) -> void:
 func on_ui_open(params: Dictionary) -> void:
 	super.on_ui_open(params)
 	_on_battle_open(params)
+#endregion
 
 
+#region 扩展点
 func _get_default_title() -> String:
 	return "战斗"
+#endregion
 
 
+#region 交互与显示
 func _on_battle_create(_params: Dictionary) -> void:
-	if _top_index_list_view != null:
-		if _top_index_list_view.has_signal("item_bound"):
-			if not _top_index_list_view.is_connected("item_bound", Callable(self, "_on_top_index_item_bound")):
-				_top_index_list_view.connect("item_bound", Callable(self, "_on_top_index_item_bound"))
-		if _top_index_list_view.has_method("init_list_view"):
-			_top_index_list_view.call("init_list_view", 100)
-	if _chat_list_view == null:
-		return
-	if _chat_list_view.has_signal("item_bound"):
-		if not _chat_list_view.is_connected("item_bound", Callable(self, "_on_chat_item_bound")):
-			_chat_list_view.connect("item_bound", Callable(self, "_on_chat_item_bound"))
-	if _chat_list_view.has_method("init_list_view"):
-		_chat_list_view.call("init_list_view", 0)
+	if top_index_list_view.has_signal("item_bound"):
+		if not top_index_list_view.is_connected("item_bound", Callable(self, "_on_top_index_item_bound")):
+			top_index_list_view.connect("item_bound", Callable(self, "_on_top_index_item_bound"))
+	if top_index_list_view.has_method("init_list_view"):
+		top_index_list_view.call("init_list_view", 100)
+	if chat_list_view.has_signal("item_bound"):
+		if not chat_list_view.is_connected("item_bound", Callable(self, "_on_chat_item_bound")):
+			chat_list_view.connect("item_bound", Callable(self, "_on_chat_item_bound"))
+	if chat_list_view.has_method("init_list_view"):
+		chat_list_view.call("init_list_view", 0)
 
 
 func _on_battle_open(_params: Dictionary) -> void:
-	if _chat_list_view == null:
-		return
 	_chat_messages = _build_mock_chat_messages()
-	if _chat_list_view.has_method("set_count_and_refresh"):
-		_chat_list_view.call("set_count_and_refresh", _chat_messages.size(), true)
-	if _chat_list_view.has_method("refresh_all_shown_item"):
-		_chat_list_view.call("refresh_all_shown_item")
+	if chat_list_view.has_method("set_count_and_refresh"):
+		chat_list_view.call("set_count_and_refresh", _chat_messages.size(), true)
+	if chat_list_view.has_method("refresh_all_shown_item"):
+		chat_list_view.call("refresh_all_shown_item")
 
 
 func _on_chat_item_bound(index: int, item_node: Node) -> void:
@@ -61,8 +68,10 @@ func _on_top_index_item_bound(index: int, item_node: Node) -> void:
 		return
 	if item_node.has_method("bind_index"):
 		item_node.call("bind_index", index)
+#endregion
 
 
+#region 内部逻辑
 func _build_mock_chat_messages() -> Array[Dictionary]:
 	var messages: Array[Dictionary] = []
 	var short_templates: PackedStringArray = PackedStringArray([
@@ -103,3 +112,4 @@ func _build_mock_chat_messages() -> Array[Dictionary]:
 		})
 		idx += 1
 	return messages
+#endregion

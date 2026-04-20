@@ -2,6 +2,10 @@
 name: 关卡设计师
 description: 空间叙事与节奏流程专家——精通布局理论、节奏架构、遭遇战设计和环境叙事，跨引擎通用
 color: teal
+owner: game-design
+status: active
+last_updated: 2026-04-20
+version: 1.1.0
 ---
 
 # 关卡设计师

@@ -12,19 +12,30 @@ const HOME_TEST_PAGE_ID: StringName = UIRegistry.HOME_TEST_PANEL
 var _login_controller: LoginController = null
 #endregion
 
-#region 节点缓存
-@onready var _status_label: Label = get_node_or_null("Panel/Margin/RootVBox/StatusLabel")
+#region 节点引用
+@export var status_label_path: NodePath
 
-@onready var _login_root: VBoxContainer = get_node_or_null("Panel/Margin/RootVBox/LoginRoot")
-@onready var _username_input: LineEdit = get_node_or_null("Panel/Margin/RootVBox/LoginRoot/UsernameInput")
-@onready var _password_input: LineEdit = get_node_or_null("Panel/Margin/RootVBox/LoginRoot/PasswordInput")
-@onready var _login_button: Button = get_node_or_null("Panel/Margin/RootVBox/LoginRoot/ButtonRow/LoginButton")
-@onready var _register_button: Button = get_node_or_null("Panel/Margin/RootVBox/LoginRoot/ButtonRow/RegisterButton")
+@export var login_root_path: NodePath
+@export var username_input_path: NodePath
+@export var password_input_path: NodePath
+@export var login_button_path: NodePath
+@export var register_button_path: NodePath
 
-@onready var _server_root: VBoxContainer = get_node_or_null("Panel/Margin/RootVBox/ServerRoot")
-@onready var _server_label: Label = get_node_or_null("Panel/Margin/RootVBox/ServerRoot/CurrentServerLabel")
-@onready var _open_server_list_button: Button = get_node_or_null("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/OpenServerListButton")
-@onready var _enter_game_button: Button = get_node_or_null("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/EnterGameButton")
+@export var server_root_path: NodePath
+@export var server_label_path: NodePath
+@export var open_server_list_button_path: NodePath
+@export var enter_game_button_path: NodePath
+
+@onready var status_label: Label = get_node(status_label_path) as Label
+@onready var login_root: VBoxContainer = get_node(login_root_path) as VBoxContainer
+@onready var username_input: LineEdit = get_node(username_input_path) as LineEdit
+@onready var password_input: LineEdit = get_node(password_input_path) as LineEdit
+@onready var login_button: Button = get_node(login_button_path) as Button
+@onready var register_button: Button = get_node(register_button_path) as Button
+@onready var server_root: VBoxContainer = get_node(server_root_path) as VBoxContainer
+@onready var server_label: Label = get_node(server_label_path) as Label
+@onready var open_server_list_button: Button = get_node(open_server_list_button_path) as Button
+@onready var enter_game_button: Button = get_node(enter_game_button_path) as Button
 #endregion
 
 #region 生命周期
@@ -41,21 +52,15 @@ func on_ui_create(_params: Dictionary) -> void:
 	_login_controller.login_flow_completed.connect(_on_login_flow_completed)
 	_login_controller.login_flow_failed.connect(_on_login_flow_failed)
 
-	if _username_input != null:
-		_username_input.focus_entered.connect(_on_username_focus_entered)
-	if _password_input != null:
-		_password_input.focus_entered.connect(_on_password_focus_entered)
+	username_input.focus_entered.connect(_on_username_focus_entered)
+	password_input.focus_entered.connect(_on_password_focus_entered)
 	_apply_default_credentials_if_needed()
 	_switch_to_login_view()
 
-	if _login_button != null:
-		_login_button.pressed.connect(_on_login_button_pressed)
-	if _register_button != null:
-		_register_button.pressed.connect(_on_register_button_pressed)
-	if _open_server_list_button != null:
-		_open_server_list_button.pressed.connect(_on_open_server_list_button_pressed)
-	if _enter_game_button != null:
-		_enter_game_button.pressed.connect(_on_enter_game_button_pressed)
+	login_button.pressed.connect(_on_login_button_pressed)
+	register_button.pressed.connect(_on_register_button_pressed)
+	open_server_list_button.pressed.connect(_on_open_server_list_button_pressed)
+	enter_game_button.pressed.connect(_on_enter_game_button_pressed)
 
 
 func on_ui_open(_params: Dictionary) -> void:
@@ -80,20 +85,16 @@ func on_click_start_game() -> void:
 func _on_login_button_pressed() -> void:
 	var username: String = default_username
 	var password: String = default_password
-	if _username_input != null:
-		username = _username_input.text.strip_edges()
-	if _password_input != null:
-		password = _password_input.text
+	username = username_input.text.strip_edges()
+	password = password_input.text
 	_login_controller.request_login(username, password)
 
 
 func _on_register_button_pressed() -> void:
 	var username: String = default_username
 	var password: String = default_password
-	if _username_input != null:
-		username = _username_input.text.strip_edges()
-	if _password_input != null:
-		password = _password_input.text
+	username = username_input.text.strip_edges()
+	password = password_input.text
 	_login_controller.request_register(username, password)
 
 
@@ -170,41 +171,33 @@ func _refresh_current_server_label() -> void:
 	var current_server: Dictionary = _login_controller.get_current_server()
 	var server_name: String = str(current_server.get("server_name", "未命名服务器"))
 	var server_url: String = str(current_server.get("server_url", ""))
-	if _server_label != null:
-		_server_label.text = "当前服务器：%s\n地址：%s" % [server_name, server_url]
+	server_label.text = "当前服务器：%s\n地址：%s" % [server_name, server_url]
 
 
 func _switch_to_login_view() -> void:
-	if _login_root != null:
-		_login_root.visible = true
-	if _server_root != null:
-		_server_root.visible = false
+	login_root.visible = true
+	server_root.visible = false
 
 
 func _switch_to_server_view() -> void:
-	if _login_root != null:
-		_login_root.visible = false
-	if _server_root != null:
-		_server_root.visible = true
+	login_root.visible = false
+	server_root.visible = true
 
 
 func _set_status_text(text: String) -> void:
-	if _status_label != null:
-		_status_label.text = text
+	status_label.text = text
 #endregion
 
 
 #region 输入体验
 func _apply_default_credentials_if_needed() -> void:
-	if _username_input == null or _password_input == null:
-		return
 	if _should_prefill_credentials():
-		_username_input.text = default_username
-		_password_input.text = default_password
+		username_input.text = default_username
+		password_input.text = default_password
 		return
 	# 微信/Web 端避免预填文本，规避输入桥接“只能追加不可删除”的问题。
-	_username_input.clear()
-	_password_input.clear()
+	username_input.clear()
+	password_input.clear()
 
 
 func _should_prefill_credentials() -> bool:
@@ -213,13 +206,11 @@ func _should_prefill_credentials() -> bool:
 
 
 func _on_username_focus_entered() -> void:
-	if _username_input != null:
-		_username_input.select_all()
+	username_input.select_all()
 
 
 func _on_password_focus_entered() -> void:
-	if _password_input != null:
-		_password_input.select_all()
+	password_input.select_all()
 #endregion
 
 #region 跳转

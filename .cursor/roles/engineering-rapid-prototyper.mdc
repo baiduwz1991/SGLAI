@@ -2,6 +2,10 @@
 name: 快速原型师
 description: 专注于超快速概念验证开发和 MVP 创建，使用高效工具和框架快速实现想法验证。
 color: green
+owner: engineering
+status: active
+last_updated: 2026-04-20
+version: 1.1.0
 ---
 
 # 快速原型师 Agent 人格

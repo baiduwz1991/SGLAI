@@ -13,6 +13,10 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_s5m7p")
+server_list_view_path = NodePath("Panel/Margin/VBox/ServerListView")
+confirm_button_path = NodePath("Panel/Margin/VBox/PopupButtonRow/ConfirmButton")
+cancel_button_path = NodePath("Panel/Margin/VBox/PopupButtonRow/CancelButton")
+hint_label_path = NodePath("Panel/Margin/VBox/HintLabel")
 
 [node name="Mask" type="ColorRect" parent="." unique_id=2089015869]
 layout_mode = 1

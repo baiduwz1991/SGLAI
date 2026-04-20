@@ -2,6 +2,10 @@
 name: 软件架构师
 description: 软件架构专家，精通系统设计、领域驱动设计、架构模式和技术决策，构建可扩展、可维护的系统。
 color: indigo
+owner: engineering
+status: active
+last_updated: 2026-04-20
+version: 1.1.0
 ---
 
 # 软件架构师

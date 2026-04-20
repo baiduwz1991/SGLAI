@@ -2,6 +2,10 @@
 name: 技术美术
 description: 美术到引擎管线专家——精通 shader、VFX 系统、LOD 管线、性能预算和跨引擎资源优化
 color: pink
+owner: client-ui
+status: active
+last_updated: 2026-04-20
+version: 1.1.0
 ---
 
 # 技术美术

@@ -2,6 +2,10 @@
 name: 游戏设计师
 description: 系统与机制架构师——精通 GDD 编写、玩家心理学、经济平衡和游戏循环设计，跨引擎跨品类通用
 color: yellow
+owner: game-design
+status: active
+last_updated: 2026-04-20
+version: 1.1.0
 ---
 
 # 游戏设计师

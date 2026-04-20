@@ -8,6 +8,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 script = ExtResource("1_d4k2q")
+bubble_path = NodePath("Bubble")
+text_label_path = NodePath("Bubble/Margin/Text")
 
 [node name="Bubble" type="PanelContainer" parent="." unique_id=395319367]
 layout_mode = 1

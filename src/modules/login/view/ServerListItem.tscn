@@ -9,6 +9,8 @@ anchors_preset = 0
 offset_bottom = 56.0
 mouse_filter = 2
 script = ExtResource("1_2tsfb")
+button_path = NodePath("Button")
+name_label_path = NodePath("Button/NameLabel")
 
 [node name="Button" type="Button" parent="." unique_id=30434134]
 layout_mode = 1

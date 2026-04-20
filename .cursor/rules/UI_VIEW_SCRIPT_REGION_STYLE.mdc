@@ -1,0 +1,64 @@
+---
+description: src/modules view 脚本的 region 组织与节点引用规范
+globs: src/modules/**/view/*.gd
+alwaysApply: false
+owner: client-ui
+status: active
+last_updated: 2026-04-20
+version: 1.2.0
+---
+
+# UI 脚本 Region 编码风格（src/modules）
+
+> 适用范围：`src/modules/**/view/*.gd`  
+> 目标：统一脚本结构，降低阅读与协作成本。
+
+---
+
+## 1) 推荐 Region 顺序
+
+按脚本职责从上到下组织：
+
+1. `#region 配置与常量`
+2. `#region 信号`
+3. `#region 状态`
+4. `#region 节点引用`
+5. `#region 生命周期`
+6. `#region 交互与显示`
+7. `#region 内部逻辑`
+8. `#region 扩展点`
+
+> 不是每个脚本都要有全部区块；按需保留。  
+> 但已有区块顺序建议保持一致。
+
+---
+
+## 2) 节点相关命名约定
+
+- 使用 `节点引用`，不要写 `节点缓存`。
+- 场景固定节点统一使用 `NodePath + @onready get_node(...)`：
+
+```gdscript
+#region 节点引用
+@export var title_label_path: NodePath
+@onready var title_label: Label = get_node(title_label_path) as Label
+#endregion
+```
+
+- 不做防空兜底；漏配置直接报错，尽早暴露问题。
+
+---
+
+## 3) BaseUI 子类额外约定
+
+- 生命周期逻辑统一放在 `#region 生命周期`。
+- `on_ui_create/on_ui_open/on_ui_show/on_ui_hide/on_ui_close/on_ui_destroy` 按顺序组织。
+- `view` 层不定义“业务流程”区块；业务逻辑统一放在控制层（`core/*Controller.gd`）。
+- 若为可复用基类，允许在 `#region 扩展点` 暴露 UI 扩展钩子（非业务流程）。
+
+---
+
+## 4) 实施说明
+
+- “最小模板”和“增量治理步骤”属于任务执行流程，统一下沉到：
+  - `.cursor/skills/ui-view-task-routing/SKILL.md`

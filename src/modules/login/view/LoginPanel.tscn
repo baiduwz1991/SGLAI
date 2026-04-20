@@ -17,6 +17,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1xy0f")
+status_label_path = NodePath("Panel/Margin/RootVBox/StatusLabel")
+login_root_path = NodePath("Panel/Margin/RootVBox/LoginRoot")
+username_input_path = NodePath("Panel/Margin/RootVBox/LoginRoot/UsernameInput")
+password_input_path = NodePath("Panel/Margin/RootVBox/LoginRoot/PasswordInput")
+login_button_path = NodePath("Panel/Margin/RootVBox/LoginRoot/ButtonRow/LoginButton")
+register_button_path = NodePath("Panel/Margin/RootVBox/LoginRoot/ButtonRow/RegisterButton")
+server_root_path = NodePath("Panel/Margin/RootVBox/ServerRoot")
+server_label_path = NodePath("Panel/Margin/RootVBox/ServerRoot/CurrentServerLabel")
+open_server_list_button_path = NodePath("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/OpenServerListButton")
+enter_game_button_path = NodePath("Panel/Margin/RootVBox/ServerRoot/ServerButtonRow/EnterGameButton")
 
 [node name="Panel" type="PanelContainer" parent="." unique_id=135923986]
 layout_mode = 1

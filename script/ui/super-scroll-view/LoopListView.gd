@@ -5,6 +5,8 @@ const TypesScript: Script = preload("res://script/ui/super-scroll-view/LoopListV
 
 signal item_bound(item_index: int, item_node: Node)
 signal item_recycled(item_node: Node)
+signal top_line_triggered
+signal down_line_triggered
 
 @export_enum("TopToBottom:0", "BottomToTop:1", "LeftToRight:2", "RightToLeft:3")
 var arrange_type: int = TypesScript.ListItemArrangeType.TOP_TO_BOTTOM
@@ -19,6 +21,7 @@ var arrange_type: int = TypesScript.ListItemArrangeType.TOP_TO_BOTTOM
 @export var inertia_release_boost: float = 28.0
 @export var inertia_damping: float = 8.0
 @export var inertia_min_speed: float = 8.0
+@export var edge_action_drag_size: float = 100.0
 @export var hide_scroll_bars: bool = true
 @export var item_scene: PackedScene
 @export var content_path: NodePath = ^"Content"
@@ -49,6 +52,11 @@ var _needs_refresh: bool = true
 var _last_refresh_offset: float = -1.0
 var _last_viewport_size: float = -1.0
 var _pending_auto_anchor_frames: int = 0
+var _edge_drag_action_type: int = 0
+
+const EDGE_ACTION_NONE: int = 0
+const EDGE_ACTION_TOP: int = 1
+const EDGE_ACTION_DOWN: int = 2
 
 
 func _ready() -> void:
@@ -553,6 +561,7 @@ func _start_drag(pointer_id: int, global_pos: Vector2) -> void:
 	_pending_auto_anchor_frames = 0
 	_inertia_velocity = 0.0
 	_last_drag_offset_delta = 0.0
+	_edge_drag_action_type = EDGE_ACTION_NONE
 	_dragging = true
 	_drag_pointer_id = pointer_id
 	_drag_last_pos = global_pos
@@ -564,9 +573,11 @@ func _stop_drag() -> void:
 		_inertia_velocity = _last_drag_offset_delta * inertia_release_boost
 	else:
 		_inertia_velocity = 0.0
+	_emit_edge_drag_action()
 	_dragging = false
 	_drag_pointer_id = -1
 	_drag_accum_distance = 0.0
+	_edge_drag_action_type = EDGE_ACTION_NONE
 
 
 func _apply_drag_delta(delta: Vector2) -> void:
@@ -575,7 +586,9 @@ func _apply_drag_delta(delta: Vector2) -> void:
 	if _drag_accum_distance < drag_scroll_deadzone:
 		return
 	var old_offset: float = _get_content_offset()
-	_set_content_offset(_get_content_offset() - axis_delta)
+	var attempted_offset: float = old_offset - axis_delta
+	_update_edge_drag_action(old_offset, attempted_offset)
+	_set_content_offset(attempted_offset)
 	var new_offset: float = _get_content_offset()
 	_last_drag_offset_delta = new_offset - old_offset
 	_refresh_window()
@@ -614,3 +627,21 @@ func _apply_inertia(delta: float) -> void:
 		return
 	var damping_t: float = clampf(inertia_damping * delta, 0.0, 1.0)
 	_inertia_velocity = lerpf(_inertia_velocity, 0.0, damping_t)
+
+
+func _update_edge_drag_action(old_offset: float, attempted_offset: float) -> void:
+	var max_offset: float = maxf(0.0, _content_total_size - _get_view_port_size())
+	if old_offset <= 0.0 and attempted_offset < 0.0:
+		if -attempted_offset >= edge_action_drag_size:
+			_edge_drag_action_type = EDGE_ACTION_TOP
+		return
+	if old_offset >= max_offset and attempted_offset > max_offset:
+		if attempted_offset - max_offset >= edge_action_drag_size:
+			_edge_drag_action_type = EDGE_ACTION_DOWN
+
+
+func _emit_edge_drag_action() -> void:
+	if _edge_drag_action_type == EDGE_ACTION_TOP:
+		top_line_triggered.emit()
+	elif _edge_drag_action_type == EDGE_ACTION_DOWN:
+		down_line_triggered.emit()
